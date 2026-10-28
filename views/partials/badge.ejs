@@ -1,0 +1,2 @@
+<% var n = s.active.length, cls = n >= s.capacity ? 'full' : n === 0 ? 'none' : (s.capacity - n) <= Math.max(1, Math.floor(s.capacity / 4)) ? 'low' : 'open'; %>
+<span class="badge <%= cls %>"><%= n >= s.capacity ? 'Voll' : n + '/' + s.capacity %></span>

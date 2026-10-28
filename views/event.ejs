@@ -1,0 +1,85 @@
+<%- include('partials/head', { title: event.title, navTitle: event.organization || event.title }) %>
+<% var now = new Date(); var days = {}; shifts.forEach(function (s) { var d = s.starts_at.slice(0, 10); (days[d] = days[d] || []).push(s); }); %>
+
+<h1 class="large-title"><%= event.title %></h1>
+<div class="hero">
+  <div class="meta">
+    <div>📅 <span><%= u.fmtDate(event.event_date) %></span></div>
+    <% if (event.location) { %><div>📍 <span><%= event.location %></span></div><% } %>
+    <div>👤 <span><%= event.admin_name %><% if (event.admin_phone) { %> · <a href="tel:<%= event.admin_phone %>"><%= event.admin_phone %></a><% } %> · <a href="mailto:<%= event.admin_email %>">E-Mail</a></span></div>
+  </div>
+  <% if (event.description) { %><p><%= event.description %></p><% } %>
+</div>
+
+<h2 class="section-header big" id="dienste">Dienste</h2>
+<% if (!shifts.length) { %>
+  <div class="group"><div class="empty">Es wurden noch keine Dienste angelegt.</div></div>
+<% } %>
+<% Object.keys(days).forEach(function (day) { %>
+  <div class="section-header"><%= u.fmtDate(day) %></div>
+  <div class="group">
+  <% days[day].forEach(function (s) { var past = u.toDate(s.ends_at) < now; var isOpen = openShift === s.id; %>
+    <details id="shift-<%= s.id %>" <%= isOpen ? 'open' : '' %> <%= isOpen ? 'data-scroll' : '' %>>
+      <summary class="row">
+        <div class="label">
+          <div><%= s.title %></div>
+          <div class="shift-time"><%= u.fmtTime(s.starts_at) %>–<%= u.fmtTime(s.ends_at) %> Uhr<% if (s.ends_at.slice(0,10) !== day) { %> (+1)<% } %></div>
+          <div class="progress"><span style="width:<%= Math.min(100, Math.round(s.active.length / s.capacity * 100)) %>%"></span></div>
+        </div>
+        <%- include('partials/badge', { s: s }) %>
+        <span class="chev"></span>
+      </summary>
+      <div class="details-body">
+        <% if (s.description) { %><p class="muted" style="margin-top:0;white-space:pre-line"><%= s.description %></p><% } %>
+        <div class="people">
+          <% s.active.forEach(function (g) { %><span class="chip"><%= u.publicName(g.name) %></span><% }) %>
+          <% for (var i = 0; i < s.free; i++) { %><span class="chip freeslot">frei</span><% } %>
+        </div>
+        <% if (past) { %>
+          <p class="muted small">Dieser Dienst ist bereits vorbei.</p>
+        <% } else if (s.free > 0) { var v = isOpen ? values : {}; %>
+          <form method="post" action="/e/<%= event.public_token %>/shifts/<%= s.id %>/signup">
+            <div class="inset">
+              <label class="field"><span>Name</span><input name="name" required maxlength="100" autocomplete="name" placeholder="Vor- und Nachname" value="<%= v.name || '' %>"></label>
+              <label class="field"><span>E-Mail</span><input type="email" name="email" required autocomplete="email" placeholder="für Bestätigung & Erinnerung" value="<%= v.email || '' %>"></label>
+              <label class="field"><span>Telefon</span><input type="tel" name="phone" autocomplete="tel" placeholder="optional" value="<%= v.phone || '' %>"></label>
+              <label class="field"><span>Bemerkung</span><input name="note" maxlength="500" placeholder="optional" value="<%= v.note || '' %>"></label>
+            </div>
+            <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
+            <label class="check" style="padding-left:0;padding-right:0"><input type="checkbox" name="privacy" value="1" required>
+              <span>Meine Kontaktdaten dürfen zur Organisation dieses Dienstes gespeichert werden. Sichtbar sind sie nur für die Veranstaltungsleitung; öffentlich erscheint nur „<%= 'Vorname N.' %>“.</span></label>
+            <button class="btn" type="submit" style="margin-top:4px">Für diesen Dienst eintragen</button>
+          </form>
+        <% } else { %>
+          <p class="muted small">Dieser Dienst ist voll besetzt – danke! Schau gern bei den anderen Diensten.</p>
+        <% } %>
+      </div>
+    </details>
+  <% }) %>
+  </div>
+<% }) %>
+
+<h2 class="section-header big" id="pinnwand">Pinnwand</h2>
+<div class="group">
+  <% if (!messages.length) { %><div class="empty">Noch keine Nachrichten.</div><% } %>
+  <% messages.forEach(function (m) { %>
+    <div class="message <%= m.is_admin ? 'admin' : '' %>">
+      <div class="head"><span class="author"><%= m.author %></span><span><%= new Date(m.created_at.replace(' ', 'T') + 'Z').toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) %></span></div>
+      <div class="body"><%= m.body %></div>
+    </div>
+  <% }) %>
+</div>
+
+<div class="section-header">Nachricht schreiben</div>
+<form method="post" action="/e/<%= event.public_token %>/messages">
+  <div class="group">
+    <label class="field"><span>Name</span><input name="author" required maxlength="60" autocomplete="name" value="<%= values.author || '' %>"></label>
+    <label class="field stack"><span>Nachricht</span><textarea name="body" required maxlength="2000" placeholder="Fragen, Absprachen, Fahrgemeinschaften …"><%= values.body || '' %></textarea></label>
+  </div>
+  <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
+  <div class="section-footer">Die Pinnwand ist für alle sichtbar, die den Link kennen.</div>
+  <button class="btn secondary" type="submit">Veröffentlichen</button>
+</form>
+
+<div class="section-footer center" style="margin-top:24px">Schon eingetragen? Über den Link in deiner Bestätigungsmail kannst du deinen Dienst ansehen oder absagen.</div>
+<%- include('partials/foot') %>

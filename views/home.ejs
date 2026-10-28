@@ -1,0 +1,37 @@
+<%- include('partials/head', { title: 'Neue Veranstaltung', navTitle: config.appName }) %>
+<h1 class="large-title">Helfer&shy;planung</h1>
+<p class="subtitle">Veranstaltung anlegen, Dienste festlegen, Link teilen – Helferinnen und Helfer tragen sich selbst ein und bekommen Bestätigung, Kalendereintrag und Erinnerung per Mail.</p>
+
+<form method="post" action="/events">
+  <div class="section-header">Veranstaltung</div>
+  <div class="group">
+    <label class="field"><span>Titel</span><input name="title" required maxlength="120" placeholder="z. B. Hoffest 2027" value="<%= values.title || '' %>"></label>
+    <label class="field"><span>Verein</span><input name="organization" maxlength="120" placeholder="z. B. Förderverein Klosterhof" value="<%= values.organization || '' %>"></label>
+    <label class="field"><span>Datum</span><input type="date" name="event_date" required value="<%= values.event_date || '' %>"></label>
+    <label class="field"><span>Ort</span><input name="location" maxlength="200" placeholder="Adresse oder Treffpunkt" value="<%= values.location || '' %>"></label>
+    <label class="field stack"><span>Beschreibung</span><textarea name="description" maxlength="4000" placeholder="Infos für alle Helfer: Ablauf, Parken, Kleidung …"><%= values.description || '' %></textarea></label>
+  </div>
+
+  <div class="section-header">Veranstaltungsleitung</div>
+  <div class="group">
+    <label class="field"><span>Name</span><input name="admin_name" required maxlength="100" autocomplete="name" value="<%= values.admin_name || '' %>"></label>
+    <label class="field"><span>E-Mail</span><input type="email" name="admin_email" required autocomplete="email" value="<%= values.admin_email || '' %>"></label>
+    <label class="field"><span>Telefon</span><input type="tel" name="admin_phone" autocomplete="tel" placeholder="optional, für Helfer sichtbar" value="<%= values.admin_phone || '' %>"></label>
+  </div>
+  <div class="section-footer">An diese Adresse gehen der Verwaltungslink und Meldungen, wenn jemand ausfällt.</div>
+
+  <% if (config.createPassword) { %>
+  <div class="section-header">Zugang</div>
+  <div class="group">
+    <label class="field"><span>Passwort</span><input type="password" name="create_password" required placeholder="Vereinspasswort"></label>
+  </div>
+  <% } %>
+
+  <div class="group" style="margin-top:20px">
+    <label class="check"><input type="checkbox" name="privacy" value="1" required>
+      <span>Ich bin berechtigt, die Veranstaltung für den Verein anzulegen. Anmeldedaten werden <% if (config.retentionDays) { %><%= config.retentionDays %> Tage nach der Veranstaltung automatisch gelöscht<% } else { %>bis zur manuellen Löschung gespeichert<% } %>.</span></label>
+  </div>
+
+  <button class="btn" type="submit">Veranstaltung anlegen</button>
+</form>
+<%- include('partials/foot') %>

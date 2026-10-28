@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title><%= title %> · <%= config.appName %></title>
+<link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/static/icon.svg">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<nav class="navbar"><div class="inner">
+  <span class="side"><% if (locals.back) { %><a href="<%= locals.back.href %>">‹ <%= locals.back.label %></a><% } %></span>
+  <span class="title"><%= locals.navTitle || title %></span>
+  <span class="side right"></span>
+</div></nav>
+<main>
+<% if (flash) { %><div class="banner ok" role="status"><%= flash %></div><% } %>
+<% if (locals.errors && locals.errors.length) { %>
+  <div class="banner err" role="alert"><ul><% locals.errors.forEach(function (e) { %><li><%= e %></li><% }) %></ul></div>
+<% } %>

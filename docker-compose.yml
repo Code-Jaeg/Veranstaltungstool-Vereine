@@ -1,0 +1,21 @@
+services:
+  vereinsdienste:
+    build: .
+    container_name: vereinsdienste
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - vereinsdienste-data:/data
+    ports:
+      - "127.0.0.1:3000:3000"   # nur lokal; öffentlich über den Reverse Proxy
+    # Beispiel für Traefik (statt "ports"):
+    # labels:
+    #   - traefik.enable=true
+    #   - traefik.http.routers.vereinsdienste.rule=Host(`dienste.jaeger-sauer.de`)
+    #   - traefik.http.routers.vereinsdienste.entrypoints=websecure
+    #   - traefik.http.routers.vereinsdienste.tls.certresolver=letsencrypt
+    #   - traefik.http.services.vereinsdienste.loadbalancer.server.port=3000
+    # networks: [proxy]
+
+volumes:
+  vereinsdienste-data:

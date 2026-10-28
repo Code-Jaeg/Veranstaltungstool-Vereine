@@ -1,0 +1,50 @@
+<%- include('partials/head', { title: 'Mein Dienst', back: { href: '/e/' + event.public_token, label: 'Dienste' } }) %>
+<% var active = signup.status === 'active'; var past = u.toDate(shift.ends_at) < new Date(); %>
+<h1 class="large-title">Mein Dienst</h1>
+<p class="subtitle"><%= event.title %></p>
+
+<div class="group">
+  <div class="row"><div class="icon <%= active ? 'green' : 'red' %>"><%= active ? '✓' : '✕' %></div><div class="label"><b><%= active ? 'Du bist eingetragen' : 'Abgesagt' %></b><% if (!active && signup.cancelled_at) { %><div class="detail">am <%= new Date(signup.cancelled_at.replace(' ', 'T') + 'Z').toLocaleString('de-DE') %></div><% } %></div></div>
+</div>
+
+<div class="section-header">Details</div>
+<div class="group">
+  <div class="row"><div class="label">Dienst</div><div class="value <%= active ? '' : 'strike' %>"><%= shift.title %></div></div>
+  <div class="row"><div class="label">Datum</div><div class="value"><%= u.fmtDate(shift.starts_at) %></div></div>
+  <div class="row"><div class="label">Uhrzeit</div><div class="value"><%= u.fmtTime(shift.starts_at) %>–<%= u.fmtTime(shift.ends_at) %> Uhr</div></div>
+  <% if (event.location) { %><div class="row"><div class="label">Ort</div><div class="value"><%= event.location %></div></div><% } %>
+  <div class="row"><div class="label">Name</div><div class="value"><%= signup.name %></div></div>
+  <div class="row"><div class="label">E-Mail</div><div class="value"><%= signup.email %></div></div>
+  <% if (signup.phone) { %><div class="row"><div class="label">Telefon</div><div class="value"><%= signup.phone %></div></div><% } %>
+</div>
+<% if (shift.description) { %><div class="section-footer" style="white-space:pre-line"><%= shift.description %></div><% } %>
+
+<% if (active) { %>
+<div class="section-header">Erinnerung</div>
+<div class="group">
+  <a class="row link" href="/s/<%= signup.token %>/dienst.ics"><div class="icon red">📅</div><div class="label">Zum Kalender hinzufügen</div></a>
+  <a class="row link" href="/s/<%= signup.token %>/dienstbestaetigung.pdf"><div class="icon orange">📄</div><div class="label">Dienstbestätigung (PDF)</div></a>
+</div>
+<% if (config.reminderHours.length) { %><div class="section-footer">Du bekommst <%= config.reminderHours.map(function (h) { return h >= 24 ? Math.round(h / 24) + ' Tag' + (h >= 48 ? 'e' : '') : h + ' Std.'; }).join(' und ') %> vor Beginn eine Erinnerung per Mail.</div><% } %>
+<% } %>
+
+<div class="section-header">Kontakt</div>
+<div class="group">
+  <div class="row"><div class="icon grey">👤</div><div class="label"><%= event.admin_name %><div class="detail">Veranstaltungsleitung</div></div></div>
+  <% if (event.admin_phone) { %><a class="row link" href="tel:<%= event.admin_phone %>"><div class="icon green">📞</div><div class="label"><%= event.admin_phone %></div></a><% } %>
+  <a class="row link" href="mailto:<%= event.admin_email %>"><div class="icon">✉️</div><div class="label"><%= event.admin_email %></div></a>
+</div>
+
+<% if (active && !past) { %>
+<div class="section-header">Verhindert?</div>
+<form method="post" action="/s/<%= signup.token %>/cancel" data-confirm="Möchtest du dich wirklich von diesem Dienst abmelden?">
+  <div class="group">
+    <label class="field stack"><span>Grund (optional, nur für die Veranstaltungsleitung)</span><textarea name="reason" maxlength="500" placeholder="z. B. krank, Terminüberschneidung …"></textarea></label>
+  </div>
+  <div class="section-footer">Die Veranstaltungsleitung wird sofort per Mail informiert, damit sie Ersatz finden kann.</div>
+  <button class="btn danger-soft" type="submit">Ich kann leider nicht</button>
+</form>
+<% } %>
+
+<a class="btn secondary" href="/e/<%= event.public_token %>">Alle Dienste ansehen</a>
+<%- include('partials/foot') %>

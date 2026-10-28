@@ -1,0 +1,173 @@
+<%- include('partials/head', { title: 'Verwaltung: ' + event.title, navTitle: 'Verwaltung' }) %>
+<% var now = new Date(); var base = '/admin/' + event.admin_token; %>
+<h1 class="large-title"><%= event.title %></h1>
+<p class="subtitle"><%= u.fmtDate(event.event_date) %><% if (event.location) { %> · <%= event.location %><% } %></p>
+
+<div class="stats">
+  <div class="stat"><b><%= stats.filled %>/<%= stats.needed %></b><small>Plätze besetzt</small></div>
+  <div class="stat"><b><%= stats.shifts %></b><small>Dienste</small></div>
+  <div class="stat"><b style="color:<%= stats.cancelled ? 'var(--red)' : 'inherit' %>"><%= stats.cancelled %></b><small>Absagen</small></div>
+</div>
+
+<div class="section-header">Link für Helferinnen & Helfer</div>
+<div class="group"><div class="row copy">
+  <input id="publicUrl" value="<%= publicUrl %>" readonly>
+  <button class="btn small" type="button" data-copy="publicUrl" data-share>Teilen</button>
+</div></div>
+<div class="section-footer">Diesen Link per WhatsApp, Mail oder Aushang verteilen. <a href="<%= publicUrl %>">Ansicht öffnen ›</a></div>
+
+<div class="section-header">Dein Verwaltungslink</div>
+<div class="group"><div class="row copy">
+  <input id="adminUrl" value="<%= adminUrl %>" readonly>
+  <button class="btn small secondary" type="button" data-copy="adminUrl">Kopieren</button>
+</div></div>
+<div class="section-footer">⚠️ Wer diesen Link hat, kann alles bearbeiten und sieht alle Kontaktdaten. Nicht weitergeben – bei Mitorganisatoren nur an vertraute Personen.</div>
+
+<h2 class="section-header big" id="dienste">Dienste</h2>
+<% if (!shifts.length) { %><div class="group"><div class="empty">Noch keine Dienste – lege unten den ersten an.</div></div><% } %>
+<% if (shifts.length) { %><div class="group">
+<% shifts.forEach(function (s) { var cancelled = s.signups.filter(function (g) { return g.status !== 'active'; }); %>
+  <details id="shift-<%= s.id %>">
+    <summary class="row">
+      <div class="label">
+        <div><%= s.title %></div>
+        <div class="shift-time"><%= u.fmtShortDate(s.starts_at) %> · <%= u.fmtTime(s.starts_at) %>–<%= u.fmtTime(s.ends_at) %> Uhr</div>
+      </div>
+      <% if (cancelled.length) { %><span class="badge none" title="Absagen"><%= cancelled.length %> ✕</span><% } %>
+      <%- include('partials/badge', { s: s }) %>
+      <span class="chev"></span>
+    </summary>
+    <div class="details-body">
+      <div class="inset">
+        <% if (!s.active.length) { %><div class="row"><div class="label muted">Noch niemand eingetragen.</div></div><% } %>
+        <% s.active.forEach(function (g) { %>
+          <div class="row">
+            <div class="label"><b><%= g.name %></b>
+              <div class="detail"><a href="mailto:<%= g.email %>"><%= g.email %></a><% if (g.phone) { %> · <a href="tel:<%= g.phone %>"><%= g.phone %></a><% } %></div>
+              <% if (g.note) { %><div class="detail">„<%= g.note %>“</div><% } %>
+            </div>
+            <form method="post" action="<%= base %>/signups/<%= g.id %>/delete" data-confirm="<%= g.name %> austragen? Die Person wird per Mail informiert."><button class="linkbtn red" type="submit">Austragen</button></form>
+          </div>
+        <% }) %>
+        <% cancelled.forEach(function (g) { %>
+          <div class="row">
+            <div class="label"><span class="strike"><%= g.name %></span> <span class="badge none">abgesagt</span>
+              <div class="detail"><a href="mailto:<%= g.email %>"><%= g.email %></a><% if (g.phone) { %> · <a href="tel:<%= g.phone %>"><%= g.phone %></a><% } %></div>
+              <% if (g.cancel_reason) { %><div class="detail">Grund: <%= g.cancel_reason %></div><% } %>
+            </div>
+            <form method="post" action="<%= base %>/signups/<%= g.id %>/delete"><button class="linkbtn" type="submit">Entfernen</button></form>
+          </div>
+        <% }) %>
+      </div>
+
+      <% if (s.free > 0) { %>
+      <details>
+        <summary class="row action" style="padding-left:0">+ Person manuell eintragen</summary>
+        <form method="post" action="<%= base %>/shifts/<%= s.id %>/signups">
+          <div class="inset">
+            <label class="field"><span>Name</span><input name="name" required maxlength="100"></label>
+            <label class="field"><span>E-Mail</span><input type="email" name="email" required></label>
+            <label class="field"><span>Telefon</span><input type="tel" name="phone"></label>
+            <label class="field"><span>Bestätigung</span><input class="switch" type="checkbox" name="notify" value="1" checked style="flex:none"><small class="muted">Mail mit .ics/PDF senden</small></label>
+          </div>
+          <button class="btn secondary" type="submit" style="margin-top:4px">Eintragen</button>
+        </form>
+      </details>
+      <% } %>
+
+      <details>
+        <summary class="row action" style="padding-left:0">✎ Dienst bearbeiten</summary>
+        <form method="post" action="<%= base %>/shifts/<%= s.id %>">
+          <div class="inset">
+            <label class="field"><span>Bezeichnung</span><input name="title" required maxlength="120" value="<%= s.title %>"></label>
+            <label class="field"><span>Beginn</span><input type="datetime-local" name="starts_at" required value="<%= s.starts_at %>"></label>
+            <label class="field"><span>Ende</span><input type="datetime-local" name="ends_at" required value="<%= s.ends_at %>"></label>
+            <label class="field"><span>Personen</span><input type="number" name="capacity" min="1" max="500" required value="<%= s.capacity %>"></label>
+            <label class="field stack"><span>Hinweise</span><textarea name="description" maxlength="1000"><%= s.description || '' %></textarea></label>
+          </div>
+          <div class="btn-row">
+            <button class="btn secondary" type="submit" style="margin-top:4px">Speichern</button>
+          </div>
+        </form>
+        <form method="post" action="<%= base %>/shifts/<%= s.id %>/delete" data-confirm="Dienst „<%= s.title %>“ inklusive aller Anmeldungen löschen? Eingetragene werden NICHT automatisch informiert.">
+          <button class="btn danger-soft" type="submit" style="margin-top:8px">Dienst löschen</button>
+        </form>
+      </details>
+    </div>
+  </details>
+<% }) %>
+</div><% } %>
+
+<div class="section-header" id="neu">Neuer Dienst</div>
+<form method="post" action="<%= base %>/shifts">
+  <div class="group">
+    <label class="field"><span>Bezeichnung</span><input name="title" required maxlength="120" placeholder="z. B. Kuchenstand, Aufbau, Kasse" value="<%= values.title || '' %>"></label>
+    <label class="field"><span>Beginn</span><input type="datetime-local" name="starts_at" required value="<%= values.starts_at || (event.event_date + 'T10:00') %>"></label>
+    <label class="field"><span>Ende</span><input type="datetime-local" name="ends_at" required value="<%= values.ends_at || (event.event_date + 'T12:00') %>"></label>
+    <label class="field"><span>Personen</span><input type="number" name="capacity" min="1" max="500" required value="<%= values.capacity || 2 %>"></label>
+    <label class="field"><span>Wiederholen</span><select name="repeat">
+      <% for (var r = 1; r <= 12; r++) { %><option value="<%= r %>"><%= r === 1 ? 'einmalig' : r + ' Schichten nacheinander' %></option><% } %>
+    </select></label>
+    <label class="field stack"><span>Hinweise für Helfer</span><textarea name="description" maxlength="1000" placeholder="optional: Treffpunkt, Mitbringen, Kleidung …"><%= values.description || '' %></textarea></label>
+  </div>
+  <div class="section-footer">„Wiederholen“ legt mehrere gleich lange Schichten direkt hintereinander an (z. B. 4 × 2 Std. Ausschank).</div>
+  <button class="btn" type="submit">Dienst hinzufügen</button>
+</form>
+
+<h2 class="section-header big" id="pinnwand">Pinnwand & Rundmail</h2>
+<form method="post" action="<%= base %>/messages">
+  <div class="group">
+    <label class="field"><span>Betreff</span><input name="subject" maxlength="120" placeholder="z. B. Treffpunkt geändert"></label>
+    <label class="field stack"><span>Nachricht</span><textarea name="body" required maxlength="4000"></textarea></label>
+    <label class="field"><span class="label" style="flex:1;width:auto">Auch per Mail an alle Eingetragenen</span><input class="switch" type="checkbox" name="mail" value="1"></label>
+  </div>
+  <button class="btn secondary" type="submit">Veröffentlichen</button>
+</form>
+<% if (messages.length) { %>
+<div class="section-header">Bisherige Nachrichten</div>
+<div class="group">
+  <% messages.forEach(function (m) { %>
+    <div class="message <%= m.is_admin ? 'admin' : '' %>">
+      <div class="head"><span class="author"><%= m.author %></span>
+        <form method="post" action="<%= base %>/messages/<%= m.id %>/delete" data-confirm="Nachricht löschen?"><button class="linkbtn red small" type="submit">Löschen</button></form></div>
+      <div class="body"><%= m.body %></div>
+    </div>
+  <% }) %>
+</div>
+<% } %>
+
+<h2 class="section-header big">Export</h2>
+<div class="group">
+  <a class="row link" href="<%= base %>/dienstplan.pdf"><div class="icon orange">📄</div><div class="label">Dienstplan (PDF, mit Kontakten)</div></a>
+  <a class="row link" href="<%= base %>/dienstplan.pdf?contacts=0"><div class="icon orange">📋</div><div class="label">Dienstplan zum Aushang (PDF, ohne Kontakte)</div></a>
+  <a class="row link" href="<%= base %>/helfer.csv"><div class="icon green">▦</div><div class="label">Helferliste (CSV für Excel)</div></a>
+  <a class="row link" href="<%= base %>/dienstplan.ics"><div class="icon red">📅</div><div class="label">Alle Dienste in meinen Kalender</div></a>
+</div>
+
+<h2 class="section-header big">Einstellungen</h2>
+<details class="group">
+  <summary class="row link" style="list-style:none"><div class="label">Veranstaltung bearbeiten</div></summary>
+  <form method="post" action="<%= base %>/event" class="details-body">
+    <div class="inset">
+      <label class="field"><span>Titel</span><input name="title" required maxlength="120" value="<%= event.title %>"></label>
+      <label class="field"><span>Verein</span><input name="organization" maxlength="120" value="<%= event.organization || '' %>"></label>
+      <label class="field"><span>Datum</span><input type="date" name="event_date" required value="<%= event.event_date %>"></label>
+      <label class="field"><span>Ort</span><input name="location" maxlength="200" value="<%= event.location || '' %>"></label>
+      <label class="field stack"><span>Beschreibung</span><textarea name="description" maxlength="4000"><%= event.description || '' %></textarea></label>
+      <label class="field"><span>Leitung</span><input name="admin_name" required maxlength="100" value="<%= event.admin_name %>"></label>
+      <label class="field"><span>E-Mail</span><input type="email" name="admin_email" required value="<%= event.admin_email %>"></label>
+      <label class="field"><span>Telefon</span><input type="tel" name="admin_phone" value="<%= event.admin_phone || '' %>"></label>
+    </div>
+    <button class="btn secondary" type="submit">Speichern</button>
+  </form>
+</details>
+
+<div class="section-header">Gefahrenzone</div>
+<form method="post" action="<%= base %>/delete" data-confirm="Veranstaltung endgültig löschen?">
+  <div class="group">
+    <label class="field"><span>Bestätigen</span><input name="confirm" required placeholder="Titel eintippen: <%= event.title %>"></label>
+  </div>
+  <div class="section-footer"><% if (config.retentionDays) { %>Ohne manuelles Löschen werden alle Daten <%= config.retentionDays %> Tage nach der Veranstaltung automatisch entfernt.<% } %></div>
+  <button class="btn danger-soft" type="submit">Veranstaltung löschen</button>
+</form>
+<%- include('partials/foot') %>
