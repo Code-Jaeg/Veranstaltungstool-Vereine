@@ -1,7 +1,20 @@
 'use strict';
 const path = require('node:path');
 
-const env = process.env;
+const fs = require('node:fs');
+
+// Geheimnisse können auch als Datei übergeben werden (z. B. CREATE_PASSWORD_FILE=/secrets/create_password),
+// damit sie nicht im Klartext in der Compose-Datei stehen.
+const env = { ...process.env };
+for (const key of Object.keys(process.env)) {
+  if (!key.endsWith('_FILE')) continue;
+  const name = key.slice(0, -5);
+  try {
+    env[name] = fs.readFileSync(process.env[key], 'utf8').trim();
+  } catch (err) {
+    console.error(`[config] ${key}: Datei nicht lesbar (${err.code})`);
+  }
+}
 
 module.exports = {
   port: Number(env.PORT || 3000),

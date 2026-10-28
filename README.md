@@ -64,7 +64,7 @@ Die Daten (SQLite) liegen im Volume `vereinsdienste-data`. Für ein Backup genü
 | Ausfall-Meldung | `N8N_WEBHOOK_URL` → n8n-Workflow **Vereinsdienste · Ausfall-Meldung** → *System · Melden* (Telegram, Push, wenn der Dienst in < 48 Std. beginnt) |
 | Öffentlich | `https://veranstaltungen.foerderverein-khs.de` → Nginx Proxy Manager → `http://192.168.178.91:8230` |
 
-`CREATE_PASSWORD` und `WEBHOOK_SECRET` liegen als Secrets im Dockhand-Stack. `WEBHOOK_SECRET` muss mit dem Wert in den beiden n8n-Workflows (Knoten „Geheimnis korrekt?“) übereinstimmen.
+Jede Variable kann alternativ als Datei übergeben werden: `NAME_FILE=/secrets/datei` (z. B. `CREATE_PASSWORD_FILE`, `WEBHOOK_SECRET_FILE`). So stehen keine Geheimnisse im Klartext in der Compose-Datei; die Dateien legst du selbst im Dockhand-Dateibrowser an. `WEBHOOK_SECRET` muss mit dem Wert in den beiden n8n-Workflows (Knoten „Geheimnis korrekt?“) übereinstimmen.
 
 Update auf eine neue Version: in Dockhand den Stack `vereinsdienste` mit „Pull“ neu deployen.
 
