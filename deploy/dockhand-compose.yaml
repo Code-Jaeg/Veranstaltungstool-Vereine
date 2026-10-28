@@ -5,8 +5,8 @@ services:
     restart: unless-stopped
     environment:
       TZ: "Europe/Berlin"
-      BASE_URL: "https://veranstaltungen.foerderverein-khs.de"
-      APP_NAME: "Helferplanung Förderverein KHS"
+      BASE_URL: "https://foerderverein-khs.sauer-jaeger.de"
+      APP_NAME: "Helferplanung Förderverein Klosterhofschule"
       CREATE_PASSWORD: "${CREATE_PASSWORD}"
       # Mails gehen an n8n (Workflow „Vereinsdienste · Mailversand“) und von dort über Mailcow raus
       MAIL_WEBHOOK_URL: "http://192.168.178.91:5678/webhook/vereinsdienste/mail"

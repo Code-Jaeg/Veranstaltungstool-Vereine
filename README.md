@@ -54,7 +54,7 @@ Die Daten (SQLite) liegen im Volume `vereinsdienste-data`. Für ein Backup genü
 | `OPERATOR_NAME`, `OPERATOR_ADDRESS`, `OPERATOR_EMAIL`, `OPERATOR_REPRESENTATIVE`, `OPERATOR_REGISTER` | Angaben für die eingebauten Seiten `/impressum` und `/datenschutz` |
 | `IMPRINT_URL`, `PRIVACY_URL` | Stattdessen auf externe Impressums-/Datenschutzseiten verlinken |
 
-### Produktivbetrieb Förderverein KHS (NAS + Dockhand + n8n)
+### Produktivbetrieb Förderverein Klosterhofschule (KHS) (NAS + Dockhand + n8n)
 
 | Baustein | Stand |
 |---|---|
@@ -62,7 +62,7 @@ Die Daten (SQLite) liegen im Volume `vereinsdienste-data`. Für ein Backup genü
 | Stack | Dockhand-Stack `vereinsdienste` (siehe [`deploy/dockhand-compose.yaml`](deploy/dockhand-compose.yaml)), Port `8230`, Daten in `/volume2/docker/vereinsdienste/data` |
 | Mailversand | `MAIL_WEBHOOK_URL` → n8n-Workflow **Vereinsdienste · Mailversand** → Mailcow |
 | Ausfall-Meldung | `N8N_WEBHOOK_URL` → n8n-Workflow **Vereinsdienste · Ausfall-Meldung** → *System · Melden* (Telegram, Push, wenn der Dienst in < 48 Std. beginnt) |
-| Öffentlich | `https://veranstaltungen.foerderverein-khs.de` → Nginx Proxy Manager → `http://192.168.178.91:8230` |
+| Öffentlich | `https://foerderverein-khs.sauer-jaeger.de` (IONOS-DynDNS über n8n-Workflow „DNS · IONOS DynDNS“) → Nginx Proxy Manager → `http://192.168.178.91:8230` |
 
 Jede Variable kann alternativ als Datei übergeben werden: `NAME_FILE=/secrets/datei` (z. B. `CREATE_PASSWORD_FILE`, `WEBHOOK_SECRET_FILE`). So stehen keine Geheimnisse im Klartext in der Compose-Datei; die Dateien legst du selbst im Dockhand-Dateibrowser an. `WEBHOOK_SECRET` muss mit dem Wert in den beiden n8n-Workflows (Knoten „Geheimnis korrekt?“) übereinstimmen.
 
