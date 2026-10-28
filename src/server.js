@@ -393,6 +393,9 @@ app.post('/admin/:at/delete', loadAdmin, (req, res) => {
   res.render('error', { title: 'Gelöscht', message: 'Die Veranstaltung und alle Anmeldedaten wurden gelöscht.' });
 });
 
+app.get('/impressum', (req, res) => res.render('impressum', { title: 'Impressum' }));
+app.get('/datenschutz', (req, res) => res.render('datenschutz', { title: 'Datenschutz' }));
+
 app.get('/healthz', (req, res) => res.json({ ok: true }));
 
 app.use((req, res) => notFound(res));
@@ -404,7 +407,7 @@ app.use((err, req, res, _next) => {
 if (require.main === module) {
   app.listen(config.port, () => {
     console.log(`${config.appName} läuft auf Port ${config.port} (${config.baseUrl})`);
-    if (!config.smtp.host) console.log('Hinweis: SMTP_HOST nicht gesetzt – Mails werden in data/outbox gespeichert.');
+    if (!config.smtp.host && !config.mailWebhookUrl) console.log('Hinweis: weder SMTP_HOST noch MAIL_WEBHOOK_URL gesetzt – Mails werden in data/outbox gespeichert.');
   });
   jobs.start();
 }

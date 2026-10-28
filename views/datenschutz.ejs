@@ -1,0 +1,31 @@
+<%- include('partials/head', { back: { href: '/', label: 'Start' } }) %>
+<% var o = config.operator; %>
+<h1 class="large-title">Datenschutz</h1>
+<p class="subtitle">So gehen wir mit deinen Daten um, wenn du dich hier für einen Dienst einträgst.</p>
+
+<div class="section-header">Verantwortlich</div>
+<div class="group"><div class="row"><div class="label">
+  <% if (o.name) { %><b><%= o.name %></b><div class="detail" style="white-space:pre-line"><%= o.address %></div><% if (o.email) { %><div class="detail"><a href="mailto:<%= o.email %>"><%= o.email %></a></div><% } %>
+  <% } else { %><span class="muted">Angaben folgen (OPERATOR_NAME/OPERATOR_ADDRESS).</span><% } %>
+</div></div></div>
+
+<div class="section-header">Welche Daten und wozu</div>
+<div class="group"><div class="row"><div class="label" style="white-space:pre-line">Beim Eintragen speichern wir Name, E-Mail-Adresse und freiwillig Telefonnummer und Bemerkung. Wir nutzen sie ausschließlich, um den Dienst zu organisieren: Bestätigung, Kalendereintrag, Erinnerungen, Rückfragen und Informationen der Veranstaltungsleitung an alle Helferinnen und Helfer.
+
+Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die du beim Eintragen erteilst. Du kannst sie jederzeit widerrufen, indem du dich über den Link in deiner Bestätigungsmail abmeldest oder die Veranstaltungsleitung kontaktierst.
+
+Auf der öffentlichen Seite erscheinen nur dein Vorname und der erste Buchstabe deines Nachnamens. Vollständige Kontaktdaten sieht nur die Veranstaltungsleitung. Beiträge auf der Pinnwand sind für alle sichtbar, die den Link der Veranstaltung kennen.</div></div></div>
+
+<div class="section-header">Speicherdauer</div>
+<div class="group"><div class="row"><div class="label">
+  <% if (config.retentionDays) { %>Alle Daten einer Veranstaltung werden <%= config.retentionDays %> Tage nach ihrem Ende automatisch gelöscht, auf Wunsch der Veranstaltungsleitung auch früher.<% } else { %>Die Daten werden gelöscht, sobald die Veranstaltungsleitung die Veranstaltung entfernt.<% } %>
+</div></div></div>
+
+<div class="section-header">Technik und Empfänger</div>
+<div class="group"><div class="row"><div class="label" style="white-space:pre-line">Die Anwendung läuft auf einem eigenen Server des Betreibers. Mails werden über den eigenen Mailserver des Betreibers verschickt. Eine Weitergabe an Dritte findet nicht statt.
+
+Wir setzen keine Cookies, keine Analyse- oder Tracking-Werkzeuge und keine externen Schriften oder Skripte ein. Der Webserver verarbeitet technisch notwendig deine IP-Adresse, um die Seite auszuliefern und Missbrauch zu verhindern (Art. 6 Abs. 1 lit. f DSGVO); sie wird nicht dauerhaft gespeichert.</div></div></div>
+
+<div class="section-header">Deine Rechte</div>
+<div class="group"><div class="row"><div class="label">Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerruf deiner Einwilligung. Außerdem kannst du dich bei einer Datenschutz-Aufsichtsbehörde beschweren.</div></div></div>
+<%- include('partials/foot') %>

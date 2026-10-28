@@ -5,7 +5,28 @@ const nodemailer = require('nodemailer');
 const config = require('./config');
 
 let transport;
-if (config.smtp.host) {
+if (config.mailWebhookUrl) {
+  // Mails werden fertig aufgebaut an n8n übergeben (dort z. B. Versand über Mailcow).
+  transport = {
+    async sendMail(msg) {
+      const res = await fetch(config.mailWebhookUrl, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-vereinsdienste-secret': config.webhookSecret },
+        body: JSON.stringify({
+          ...msg,
+          attachments: msg.attachments.map((a) => ({
+            filename: a.filename,
+            contentType: a.contentType || (a.filename.endsWith('.pdf') ? 'application/pdf' : 'application/octet-stream'),
+            content: Buffer.from(a.content).toString('base64'),
+          })),
+        }),
+        signal: AbortSignal.timeout(30_000),
+      });
+      if (!res.ok) throw new Error(`Mail-Webhook antwortet mit HTTP ${res.status}`);
+      return { message: '' };
+    },
+  };
+} else if (config.smtp.host) {
   transport = nodemailer.createTransport({
     host: config.smtp.host,
     port: config.smtp.port,
@@ -51,7 +72,7 @@ async function send({ to, subject, content, attachments = [], replyTo }) {
     text: textVersion(content),
     attachments,
   });
-  if (!config.smtp.host) {
+  if (!config.smtp.host && !config.mailWebhookUrl) {
     const dir = path.join(config.dataDir, 'outbox');
     fs.mkdirSync(dir, { recursive: true });
     const file = path.join(dir, `${Date.now()}-${String(to).replace(/[^a-z0-9@.]/gi, '_')}.eml`);

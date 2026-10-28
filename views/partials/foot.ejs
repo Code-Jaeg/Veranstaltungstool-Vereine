@@ -1,7 +1,7 @@
 <footer>
   <%= config.appName %>
-  <% if (config.imprintUrl) { %> · <a href="<%= config.imprintUrl %>">Impressum</a><% } %>
-  <% if (config.privacyUrl) { %> · <a href="<%= config.privacyUrl %>">Datenschutz</a><% } %>
+  · <a href="<%= config.imprintUrl || '/impressum' %>">Impressum</a>
+  · <a href="<%= config.privacyUrl || '/datenschutz' %>">Datenschutz</a>
 </footer>
 </main>
 <script src="/static/app.js"></script>

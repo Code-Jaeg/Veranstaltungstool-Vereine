@@ -37,8 +37,9 @@ async function webhook(type, payload) {
   try {
     await fetch(config.webhookUrl, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', 'x-vereinsdienste-secret': config.webhookSecret },
       body: JSON.stringify({ type, at: new Date().toISOString(), ...payload }),
+      signal: AbortSignal.timeout(15_000),
     });
   } catch (err) {
     console.error('[webhook] fehlgeschlagen:', err.message);

@@ -23,8 +23,20 @@ module.exports = {
     .split(',').map((h) => Number(h.trim())).filter((h) => h > 0).sort((a, b) => b - a),
   // Tage nach der Veranstaltung, nach denen personenbezogene Daten gelöscht werden (0 = nie).
   retentionDays: Number(env.DATA_RETENTION_DAYS ?? 30),
+  // Alternativ zu SMTP: Mails an einen n8n-Webhook übergeben, der sie versendet.
+  mailWebhookUrl: env.MAIL_WEBHOOK_URL || '',
   // Optional: n8n-Webhook, der bei Anmeldung/Absage benachrichtigt wird.
   webhookUrl: env.N8N_WEBHOOK_URL || '',
+  // Gemeinsames Geheimnis, das als Header X-Vereinsdienste-Secret an die Webhooks geht.
+  webhookSecret: env.WEBHOOK_SECRET || '',
+  // Angaben für Impressum und Datenschutzerklärung.
+  operator: {
+    name: env.OPERATOR_NAME || '',
+    address: env.OPERATOR_ADDRESS || '',
+    email: env.OPERATOR_EMAIL || '',
+    representative: env.OPERATOR_REPRESENTATIVE || '',
+    register: env.OPERATOR_REGISTER || '',
+  },
   imprintUrl: env.IMPRINT_URL || '',
   privacyUrl: env.PRIVACY_URL || '',
 };
