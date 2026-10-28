@@ -1,0 +1,28 @@
+services:
+  vereinsdienste:
+    image: ghcr.io/code-jaeg/veranstaltungstool-vereine:latest
+    container_name: Vereinsdienste
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Berlin"
+      BASE_URL: "https://veranstaltungen.foerderverein-khs.de"
+      APP_NAME: "Helferplanung Förderverein KHS"
+      CREATE_PASSWORD: "${CREATE_PASSWORD}"
+      # Mails gehen an n8n (Workflow „Vereinsdienste · Mailversand“) und von dort über Mailcow raus
+      MAIL_WEBHOOK_URL: "http://192.168.178.91:5678/webhook/vereinsdienste/mail"
+      MAIL_FROM: "Förderverein KHS · Helferplanung <andreas.jaeger@sauer-jaeger.de>"
+      # Absagen zusätzlich über n8n (Workflow „Vereinsdienste · Ausfall-Meldung“) per Telegram/Push
+      N8N_WEBHOOK_URL: "http://192.168.178.91:5678/webhook/vereinsdienste/ereignis"
+      WEBHOOK_SECRET: "${WEBHOOK_SECRET}"
+      REMINDER_HOURS: "48,3"
+      DATA_RETENTION_DAYS: "30"
+      # Impressum/Datenschutz: hier die Angaben des Vereins eintragen
+      OPERATOR_NAME: ""
+      OPERATOR_ADDRESS: ""
+      OPERATOR_EMAIL: ""
+      OPERATOR_REPRESENTATIVE: ""
+      OPERATOR_REGISTER: ""
+    volumes:
+      - /volume2/docker/vereinsdienste/data:/data
+    ports:
+      - "8230:3000"

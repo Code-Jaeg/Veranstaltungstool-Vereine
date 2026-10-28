@@ -49,7 +49,26 @@ Die Daten (SQLite) liegen im Volume `vereinsdienste-data`. Für ein Backup genü
 | `REMINDER_HOURS` | Wann vor Dienstbeginn erinnert wird, z. B. `48,3` |
 | `DATA_RETENTION_DAYS` | Automatisches Löschen nach X Tagen (0 = nie) |
 | `N8N_WEBHOOK_URL` | Optionaler Webhook (siehe unten) |
-| `IMPRINT_URL`, `PRIVACY_URL` | Links zu Impressum und Datenschutzerklärung im Footer |
+| `MAIL_WEBHOOK_URL` | Mails an n8n übergeben statt SMTP |
+| `WEBHOOK_SECRET` | Wird als Header `X-Vereinsdienste-Secret` an beide Webhooks geschickt |
+| `OPERATOR_NAME`, `OPERATOR_ADDRESS`, `OPERATOR_EMAIL`, `OPERATOR_REPRESENTATIVE`, `OPERATOR_REGISTER` | Angaben für die eingebauten Seiten `/impressum` und `/datenschutz` |
+| `IMPRINT_URL`, `PRIVACY_URL` | Stattdessen auf externe Impressums-/Datenschutzseiten verlinken |
+
+### Produktivbetrieb Förderverein KHS (NAS + Dockhand + n8n)
+
+| Baustein | Stand |
+|---|---|
+| Docker-Image | `ghcr.io/code-jaeg/veranstaltungstool-vereine:latest`, gebaut von GitHub Actions bei jedem Push |
+| Stack | Dockhand-Stack `vereinsdienste` (siehe [`deploy/dockhand-compose.yaml`](deploy/dockhand-compose.yaml)), Port `8230`, Daten in `/volume2/docker/vereinsdienste/data` |
+| Mailversand | `MAIL_WEBHOOK_URL` → n8n-Workflow **Vereinsdienste · Mailversand** → Mailcow |
+| Ausfall-Meldung | `N8N_WEBHOOK_URL` → n8n-Workflow **Vereinsdienste · Ausfall-Meldung** → *System · Melden* (Telegram, Push, wenn der Dienst in < 48 Std. beginnt) |
+| Öffentlich | `https://veranstaltungen.foerderverein-khs.de` → Nginx Proxy Manager → `http://192.168.178.91:8230` |
+
+`CREATE_PASSWORD` und `WEBHOOK_SECRET` liegen als Secrets im Dockhand-Stack. `WEBHOOK_SECRET` muss mit dem Wert in den beiden n8n-Workflows (Knoten „Geheimnis korrekt?“) übereinstimmen.
+
+Update auf eine neue Version: in Dockhand den Stack `vereinsdienste` mit „Pull“ neu deployen.
+
+Statt SMTP kann die Anwendung Mails auch an einen Webhook übergeben (`MAIL_WEBHOOK_URL`). Der POST enthält `from`, `to`, `replyTo`, `subject`, `html`, `text` und `attachments[]` (`filename`, `contentType`, `content` als base64) sowie den Header `X-Vereinsdienste-Secret`.
 
 ### n8n-Anbindung
 Ist `N8N_WEBHOOK_URL` gesetzt, sendet die Anwendung bei `signup.created` und `signup.cancelled` einen POST mit folgendem JSON:
