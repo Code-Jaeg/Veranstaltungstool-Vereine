@@ -51,7 +51,8 @@ Die Daten (SQLite) liegen im Volume `vereinsdienste-data`. Für ein Backup genü
 | `N8N_WEBHOOK_URL` | Optionaler Webhook (siehe unten) |
 | `MAIL_WEBHOOK_URL` | Mails an n8n übergeben statt SMTP |
 | `WEBHOOK_SECRET` | Wird als Header `X-Vereinsdienste-Secret` an beide Webhooks geschickt |
-| `OPERATOR_NAME`, `OPERATOR_ADDRESS`, `OPERATOR_EMAIL`, `OPERATOR_REPRESENTATIVE`, `OPERATOR_REGISTER` | Angaben für die eingebauten Seiten `/impressum` und `/datenschutz` |
+| `OPERATOR_NAME`, `OPERATOR_ADDRESS`, `OPERATOR_EMAIL`, `OPERATOR_REPRESENTATIVE`, `OPERATOR_REGISTER` | Angaben für die eingebauten Seiten `/impressum` und `/datenschutz` (Zeilenumbruch mit `\n`) |
+| `OPERATOR_PRIVACY_URL`, `OPERATOR_PRIVACY_NOTE` | Link auf die vollständige Datenschutzerklärung des Betreibers und zusätzlicher Datenschutzhinweis (Freitext) |
 | `IMPRINT_URL`, `PRIVACY_URL` | Stattdessen auf externe Impressums-/Datenschutzseiten verlinken |
 
 ### Produktivbetrieb Förderverein Klosterhofschule (KHS) (NAS + Dockhand + n8n)

@@ -49,6 +49,10 @@ module.exports = {
     email: env.OPERATOR_EMAIL || '',
     representative: env.OPERATOR_REPRESENTATIVE || '',
     register: env.OPERATOR_REGISTER || '',
+    // Vollständige Datenschutzerklärung des Betreibers (z. B. Vereinswebsite)
+    privacyUrl: env.OPERATOR_PRIVACY_URL || '',
+    // Zusätzlicher Datenschutzhinweis des Betreibers (Freitext)
+    privacyNote: env.OPERATOR_PRIVACY_NOTE || '',
   },
   imprintUrl: env.IMPRINT_URL || '',
   privacyUrl: env.PRIVACY_URL || '',

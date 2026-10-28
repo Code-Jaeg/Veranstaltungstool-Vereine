@@ -22,10 +22,18 @@ Auf der öffentlichen Seite erscheinen nur dein Vorname und der erste Buchstabe 
 </div></div></div>
 
 <div class="section-header">Technik und Empfänger</div>
-<div class="group"><div class="row"><div class="label" style="white-space:pre-line">Die Anwendung läuft auf einem eigenen Server des Betreibers. Mails werden über den eigenen Mailserver des Betreibers verschickt. Eine Weitergabe an Dritte findet nicht statt.
+<div class="group"><div class="row"><div class="label" style="white-space:pre-line">Die Anwendung läuft auf einem privat betriebenen Server in Deutschland, der von einem Vorstandsmitglied bereitgestellt wird; auch die Mails werden über dessen eigenen Mailserver verschickt. Eine Weitergabe an Dritte findet nicht statt.
 
-Wir setzen keine Cookies, keine Analyse- oder Tracking-Werkzeuge und keine externen Schriften oder Skripte ein. Der Webserver verarbeitet technisch notwendig deine IP-Adresse, um die Seite auszuliefern und Missbrauch zu verhindern (Art. 6 Abs. 1 lit. f DSGVO); sie wird nicht dauerhaft gespeichert.</div></div></div>
+Wir setzen keine Cookies, keine Analyse- oder Tracking-Werkzeuge und keine externen Schriften oder Skripte ein. Der vorgeschaltete Webserver verarbeitet technisch notwendig deine IP-Adresse und den Zeitpunkt des Zugriffs, um die Seite auszuliefern und Missbrauch abzuwehren (Art. 6 Abs. 1 lit. f DSGVO). Diese Protokolldaten werden nur kurzzeitig gespeichert und nicht ausgewertet.</div></div></div>
+
+<% if (o.privacyNote) { %>
+<div class="section-header">Kontakt per E-Mail</div>
+<div class="group"><div class="row"><div class="label" style="white-space:pre-line"><%= o.privacyNote %></div></div></div>
+<% } %>
 
 <div class="section-header">Deine Rechte</div>
 <div class="group"><div class="row"><div class="label">Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerruf deiner Einwilligung. Außerdem kannst du dich bei einer Datenschutz-Aufsichtsbehörde beschweren.</div></div></div>
+<% if (o.privacyUrl) { %>
+<div class="group" style="margin-top:20px"><a class="row link" href="<%= o.privacyUrl %>"><div class="label">Vollständige Datenschutzerklärung<% if (o.name) { %> · <%= o.name %><% } %></div></a></div>
+<% } %>
 <%- include('partials/foot') %>

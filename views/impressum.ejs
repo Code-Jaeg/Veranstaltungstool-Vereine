@@ -7,10 +7,11 @@
 <div class="section-header">Angaben gemäß § 5 DDG</div>
 <div class="group">
   <div class="row"><div class="label"><b><%= o.name %></b><div class="detail" style="white-space:pre-line"><%= o.address %></div></div></div>
-  <% if (o.representative) { %><div class="row"><div class="label">Vertreten durch</div><div class="value"><%= o.representative %></div></div><% } %>
-  <% if (o.register) { %><div class="row"><div class="label">Register</div><div class="value"><%= o.register %></div></div><% } %>
-  <% if (o.email) { %><a class="row link" href="mailto:<%= o.email %>"><div class="label">E-Mail</div><div class="value"><%= o.email %></div></a><% } %>
+  <% if (o.representative) { %><div class="row"><div class="label"><span class="muted small">Vertreten durch</span><div style="white-space:pre-line"><%= o.representative %></div></div></div><% } %>
+  <% if (o.register) { %><div class="row"><div class="label"><span class="muted small">Registereintrag</span><div style="white-space:pre-line"><%= o.register %></div></div></div><% } %>
+  <% if (o.email) { %><a class="row link" href="mailto:<%= o.email %>"><div class="label"><span class="muted small">E-Mail</span><div><%= o.email %></div></div></a><% } %>
 </div>
+<% if (o.privacyUrl) { %><div class="group" style="margin-top:20px"><a class="row link" href="/datenschutz"><div class="label">Datenschutz</div></a></div><% } %>
 <div class="section-footer">Verantwortlich für den Inhalt einzelner Veranstaltungen ist die jeweils angegebene Veranstaltungsleitung.</div>
 <% } %>
 <%- include('partials/foot') %>
