@@ -19,7 +19,7 @@ services:
       # Impressum/Datenschutz
       OPERATOR_NAME: "Förderverein Klosterhofschule Nellingen e.V."
       OPERATOR_ADDRESS: "Klosterhof 2\n73760 Ostfildern"
-      OPERATOR_EMAIL: ""
+      OPERATOR_EMAIL: "info@foerderverein-klosterhofschule.de"
       OPERATOR_REPRESENTATIVE: "Jan Weiss, Andreas Jäger, Sandro Coletti"
       OPERATOR_REGISTER: "VR 211519, Registergericht Stuttgart"
       OPERATOR_PRIVACY_URL: "https://foerderverein-klosterhofschule.de/datenschutzerklaerung/"
