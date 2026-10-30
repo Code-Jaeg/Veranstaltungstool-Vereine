@@ -6,15 +6,15 @@ Am Nextcloud-Core wird nichts verändert, deshalb überleben die Themes Updates.
 
 | Theme | Datei | Look |
 |---|---|---|
-| **Catppuccin Latte** (Standard) | `catppuccin-latte.css` | Helle Pastellpalette von [Catppuccin](https://catppuccin.com/palette), Akzent Mauve `#8839EF` |
+| **Catppuccin Latte** (Standard) | `catppuccin-latte.css` | Helle Pastellpalette von [Catppuccin](https://catppuccin.com/palette), Akzent Blue `#1E66F5` |
 | Apple | `ios-theme.css` | Nach Vorbild iCloud.com / apple.com, Akzent `#0071E3` |
 
 ## Catppuccin Latte
 
 - Offizielle Latte-Palette: Hintergrund Base `#EFF1F5`, Seitenleiste/Kopfzeile Mantle `#E6E9EF`,
-  Text `#4C4F69`, Akzent Mauve `#8839EF`
+  Text `#4C4F69`, Akzent Blue `#1E66F5`
 - Kopfzeile und Seitenleiste in Mantle mit Icons in Catppuccin-Textfarbe
-- Aktive Einträge zart lila hinterlegt, Fokusring und Buttons in Mauve
+- Aktive Einträge zart blau hinterlegt, Fokusring und Buttons in Blue
 - Login-Seite mit sanftem Pastell-Verlauf
 - Hellmodus wird für alle erzwungen (`enforce_theme = light`), damit niemand die dunkle
   Nextcloud-Variante mit dem hellen CSS mischt
@@ -46,7 +46,7 @@ Zurück zum Apple-Theme:
 ## Manuell über die Weboberfläche (Catppuccin)
 
 1. *Apps → Anpassung* → **Custom CSS** aktivieren
-2. *Verwaltungseinstellungen → Design*: Primärfarbe `#8839EF`, Hintergrundfarbe `#DCE0E8`,
+2. *Verwaltungseinstellungen → Design*: Primärfarbe `#1E66F5`, Hintergrundfarbe `#DCE0E8`,
    „Nutzer-Design deaktivieren“ anhaken
 3. Inhalt von `catppuccin-latte.css` in das Feld **Custom CSS** einfügen und speichern
 4. Hellmodus erzwingen geht nur per Befehl:

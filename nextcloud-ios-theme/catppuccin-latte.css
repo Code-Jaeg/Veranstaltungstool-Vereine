@@ -2,7 +2,7 @@
  * Nextcloud – Catppuccin Latte (helle Variante)
  * Offizielle Palette: https://catppuccin.com/palette
  * Serverweit über die App "Custom CSS". Ausgelegt für Nextcloud 28–32.
- * Akzentfarbe: Mauve. Hellmodus wird per apply-theme.sh erzwungen.
+ * Akzentfarbe: Blue. Hellmodus wird per apply-theme.sh erzwungen.
  */
 
 /* ---------- Palette & Nextcloud-Variablen ---------- */
@@ -41,7 +41,7 @@ body,
 	--ctp-mantle: #e6e9ef;
 	--ctp-crust: #dce0e8;
 
-	--ctp-accent: var(--ctp-mauve);
+	--ctp-accent: var(--ctp-blue);
 
 	/* Flächen */
 	--color-main-background: var(--ctp-base) !important;
@@ -68,14 +68,14 @@ body,
 	/* Akzent */
 	--color-primary: var(--ctp-accent) !important;
 	--color-primary-element: var(--ctp-accent) !important;
-	--color-primary-element-hover: #7a2fd9 !important;
+	--color-primary-element-hover: #1a58d6 !important;
 	--color-primary-element-text: #ffffff !important;
-	--color-primary-element-light: #ece2fd !important;
-	--color-primary-element-light-hover: #e1d1fc !important;
-	--color-primary-element-light-text: #6420bf !important;
-	--color-primary-light: #ece2fd !important;
-	--color-primary-light-hover: #e1d1fc !important;
-	--color-primary-light-text: #6420bf !important;
+	--color-primary-element-light: #dde7fe !important;
+	--color-primary-element-light-hover: #cbdafd !important;
+	--color-primary-element-light-text: #164cc0 !important;
+	--color-primary-light: #dde7fe !important;
+	--color-primary-light-hover: #cbdafd !important;
+	--color-primary-light-text: #164cc0 !important;
 
 	/* Status */
 	--color-error: var(--ctp-red) !important;
@@ -276,7 +276,7 @@ textarea:focus-visible {
 
 /* ---------- Login-Seite ---------- */
 body#body-login {
-	background: linear-gradient(135deg, var(--ctp-base) 0%, #ece2fd 50%, #dbe6fd 100%) !important;
+	background: linear-gradient(135deg, var(--ctp-base) 0%, #dde7fe 50%, #d9f0fb 100%) !important;
 }
 
 body#body-login .guest-box,

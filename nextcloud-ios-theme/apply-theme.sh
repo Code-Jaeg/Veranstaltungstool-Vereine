@@ -18,7 +18,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 case "$THEME" in
 	catppuccin)
 		CSS_FILE="$SCRIPT_DIR/catppuccin-latte.css"
-		PRIMARY="#8839EF"   # Catppuccin Latte Mauve
+		PRIMARY="#1E66F5"   # Catppuccin Latte Blue
 		BACKGROUND="#DCE0E8" # Catppuccin Latte Crust
 		ENFORCE_THEME="light"
 		;;
