@@ -1,0 +1,295 @@
+/*
+ * Nextcloud – Catppuccin Latte (helle Variante)
+ * Offizielle Palette: https://catppuccin.com/palette
+ * Serverweit über die App "Custom CSS". Ausgelegt für Nextcloud 28–32.
+ * Akzentfarbe: Mauve. Hellmodus wird per apply-theme.sh erzwungen.
+ */
+
+/* ---------- Palette & Nextcloud-Variablen ---------- */
+:root,
+body,
+[data-theme-default],
+[data-theme-light],
+[data-theme-dark],
+[data-theme-light-highcontrast],
+[data-theme-dark-highcontrast] {
+	/* Catppuccin Latte */
+	--ctp-rosewater: #dc8a78;
+	--ctp-flamingo: #dd7878;
+	--ctp-pink: #ea76cb;
+	--ctp-mauve: #8839ef;
+	--ctp-red: #d20f39;
+	--ctp-maroon: #e64553;
+	--ctp-peach: #fe640b;
+	--ctp-yellow: #df8e1d;
+	--ctp-green: #40a02b;
+	--ctp-teal: #179299;
+	--ctp-sky: #04a5e5;
+	--ctp-sapphire: #209fb5;
+	--ctp-blue: #1e66f5;
+	--ctp-lavender: #7287fd;
+	--ctp-text: #4c4f69;
+	--ctp-subtext1: #5c5f77;
+	--ctp-subtext0: #6c6f85;
+	--ctp-overlay2: #7c7f93;
+	--ctp-overlay1: #8c8fa1;
+	--ctp-overlay0: #9ca0b0;
+	--ctp-surface2: #acb0be;
+	--ctp-surface1: #bcc0cc;
+	--ctp-surface0: #ccd0da;
+	--ctp-base: #eff1f5;
+	--ctp-mantle: #e6e9ef;
+	--ctp-crust: #dce0e8;
+
+	--ctp-accent: var(--ctp-mauve);
+
+	/* Flächen */
+	--color-main-background: var(--ctp-base) !important;
+	--color-main-background-rgb: 239, 241, 245 !important;
+	--color-main-background-translucent: rgba(239, 241, 245, 0.85) !important;
+	--color-main-background-blur: rgba(239, 241, 245, 0.85) !important;
+	--color-background-hover: var(--ctp-mantle) !important;
+	--color-background-dark: var(--ctp-mantle) !important;
+	--color-background-darker: var(--ctp-crust) !important;
+	--color-placeholder-light: var(--ctp-surface0) !important;
+	--color-placeholder-dark: var(--ctp-surface1) !important;
+
+	/* Text */
+	--color-main-text: var(--ctp-text) !important;
+	--color-text-maxcontrast: var(--ctp-subtext0) !important;
+	--color-text-light: var(--ctp-text) !important;
+	--color-text-lighter: var(--ctp-subtext1) !important;
+
+	/* Linien */
+	--color-border: var(--ctp-surface0) !important;
+	--color-border-dark: var(--ctp-surface1) !important;
+	--color-border-maxcontrast: var(--ctp-overlay1) !important;
+
+	/* Akzent */
+	--color-primary: var(--ctp-accent) !important;
+	--color-primary-element: var(--ctp-accent) !important;
+	--color-primary-element-hover: #7a2fd9 !important;
+	--color-primary-element-text: #ffffff !important;
+	--color-primary-element-light: #ece2fd !important;
+	--color-primary-element-light-hover: #e1d1fc !important;
+	--color-primary-element-light-text: #6420bf !important;
+	--color-primary-light: #ece2fd !important;
+	--color-primary-light-hover: #e1d1fc !important;
+	--color-primary-light-text: #6420bf !important;
+
+	/* Status */
+	--color-error: var(--ctp-red) !important;
+	--color-error-hover: var(--ctp-maroon) !important;
+	--color-warning: #b26b09 !important;
+	--color-success: #2f7d1e !important;
+	--color-info: var(--ctp-blue) !important;
+	--color-favorite: var(--ctp-yellow) !important;
+
+	/* Form */
+	--font-face: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+		"Helvetica Neue", Arial, sans-serif !important;
+	--border-radius: 8px !important;
+	--border-radius-small: 6px !important;
+	--border-radius-element: 8px !important;
+	--border-radius-large: 12px !important;
+	--border-radius-container: 12px !important;
+	--border-radius-container-large: 16px !important;
+	--border-radius-pill: 999px !important;
+	--body-container-radius: 14px !important;
+}
+
+/* ---------- Grundlage ---------- */
+body {
+	background-color: var(--ctp-crust) !important;
+	color: var(--ctp-text);
+	-webkit-font-smoothing: antialiased;
+}
+
+::selection {
+	background-color: color-mix(in srgb, var(--ctp-accent) 25%, transparent);
+}
+
+a:not(.button-vue):not([class*="app-"]):not([class*="files-list"]) {
+	color: var(--ctp-blue);
+}
+
+/* ---------- Kopfzeile ---------- */
+#header {
+	background-color: var(--ctp-mantle) !important;
+	border-bottom: 1px solid var(--ctp-surface0);
+}
+
+#header,
+#header .app-menu-entry__label,
+#header .header-menu__trigger,
+#header .unified-search__trigger {
+	color: var(--ctp-text) !important;
+}
+
+/* Weiße Nextcloud-Icons in Catppuccin-Textfarbe umfärben */
+#header .app-menu-entry__icon,
+#header .app-menu-icon__icon,
+#header .header-menu__trigger img,
+#header .header-menu__trigger svg,
+#header .unified-search__trigger svg {
+	filter: brightness(0) saturate(100%) invert(31%) sepia(12%) saturate(1006%)
+		hue-rotate(196deg) brightness(93%) contrast(88%) !important;
+}
+
+#header .app-menu-entry--active::before {
+	background-color: var(--ctp-accent) !important;
+	border-radius: var(--border-radius-pill) !important;
+}
+
+/* ---------- Inhaltsfläche ---------- */
+#content,
+#content-vue {
+	border-radius: var(--body-container-radius) !important;
+	border: 1px solid var(--ctp-surface0);
+	box-shadow: 0 4px 18px rgba(76, 79, 105, 0.08);
+}
+
+/* ---------- Linke Seitenleiste ---------- */
+.app-navigation,
+#app-navigation-vue {
+	background-color: var(--ctp-mantle) !important;
+	border-right: 1px solid var(--ctp-surface0) !important;
+}
+
+.app-navigation-entry {
+	border-radius: var(--border-radius) !important;
+}
+
+.app-navigation-entry:hover {
+	background-color: var(--ctp-crust) !important;
+}
+
+.app-navigation-entry.active,
+.app-navigation-entry--active {
+	background-color: var(--color-primary-element-light) !important;
+}
+
+.app-navigation-entry.active .app-navigation-entry__name,
+.app-navigation-entry--active .app-navigation-entry__name,
+.app-navigation-entry.active .app-navigation-entry-link,
+.app-navigation-entry--active .app-navigation-entry-link,
+.app-navigation-entry.active .app-navigation-entry-icon,
+.app-navigation-entry--active .app-navigation-entry-icon {
+	color: var(--color-primary-element-light-text) !important;
+	font-weight: 600;
+}
+
+.app-navigation-caption,
+.app-navigation-caption__name {
+	color: var(--ctp-subtext0) !important;
+	font-weight: 600 !important;
+}
+
+/* ---------- Rechte Seitenleiste ---------- */
+.app-sidebar,
+#app-sidebar-vue {
+	background-color: var(--ctp-base) !important;
+	border-left: 1px solid var(--ctp-surface0) !important;
+}
+
+/* ---------- Buttons ---------- */
+.button-vue {
+	font-weight: 500 !important;
+}
+
+.button-vue--vue-primary,
+.button-vue--primary {
+	box-shadow: 0 2px 8px color-mix(in srgb, var(--ctp-accent) 30%, transparent) !important;
+}
+
+.button-vue--vue-error,
+.button-vue--error {
+	background-color: var(--ctp-red) !important;
+	color: #ffffff !important;
+}
+
+.button-vue--vue-success,
+.button-vue--success {
+	background-color: var(--ctp-green) !important;
+	color: #ffffff !important;
+}
+
+/* ---------- Eingabefelder ---------- */
+.input-field__input,
+.textarea__input,
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="search"],
+input[type="url"],
+input[type="tel"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+	background-color: #ffffff !important;
+	border: 1px solid var(--ctp-surface1) !important;
+	border-radius: var(--border-radius) !important;
+	color: var(--ctp-text) !important;
+	box-shadow: none !important;
+}
+
+.input-field__input:focus,
+.textarea__input:focus,
+input:focus-visible,
+textarea:focus-visible {
+	border-color: var(--ctp-accent) !important;
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--ctp-accent) 20%, transparent) !important;
+}
+
+/* ---------- Menüs, Popover, Dialoge ---------- */
+.v-popper--theme-dropdown .v-popper__inner,
+.header-menu__content {
+	background-color: var(--ctp-base) !important;
+	border: 1px solid var(--ctp-surface0) !important;
+	border-radius: var(--border-radius-large) !important;
+	box-shadow: 0 12px 36px rgba(76, 79, 105, 0.16) !important;
+}
+
+.modal-container {
+	border-radius: var(--border-radius-container-large) !important;
+	box-shadow: 0 16px 48px rgba(76, 79, 105, 0.22) !important;
+}
+
+.modal-mask {
+	background-color: rgba(76, 79, 105, 0.35) !important;
+}
+
+/* ---------- Dateiliste ---------- */
+.files-list__row {
+	border-bottom: 1px solid var(--ctp-mantle) !important;
+}
+
+.files-list__row:hover {
+	background-color: var(--ctp-mantle) !important;
+}
+
+.files-list__row--active,
+.files-list__row--active:hover {
+	background-color: var(--color-primary-element-light) !important;
+}
+
+/* ---------- Login-Seite ---------- */
+body#body-login {
+	background: linear-gradient(135deg, var(--ctp-base) 0%, #ece2fd 50%, #dbe6fd 100%) !important;
+}
+
+body#body-login .guest-box,
+body#body-login .login-box {
+	background-color: var(--ctp-base) !important;
+	color: var(--ctp-text) !important;
+	border: 1px solid var(--ctp-surface0);
+	border-radius: var(--border-radius-container-large) !important;
+	box-shadow: 0 16px 48px rgba(76, 79, 105, 0.18) !important;
+}
+
+/* ---------- Scrollbars ---------- */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--ctp-surface2) transparent;
+}
