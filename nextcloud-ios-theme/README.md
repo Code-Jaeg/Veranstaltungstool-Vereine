@@ -6,12 +6,14 @@ Am Nextcloud-Core wird nichts verändert, deshalb überlebt das Theme Updates.
 
 ## Was sich ändert
 
-- Systemschrift (auf iPhone/Mac San Francisco), engere Laufweite, fette Überschriften
-- iOS-Systemfarben: Akzent `#007AFF`, gruppierter Hintergrund `#F2F2F7`, Dunkelmodus `#1C1C1E`/`#000`
-- „Glas“-Effekt (Blur) für Kopfzeile, Seitenleisten, Menüs und Login-Box
-- Abgerundete Ecken wie in iOS (10/14/22 px), Buttons als Pillen mit Antippen-Animation
-- Eingabefelder im iOS-Stil mit blauem Fokusring, aktivierte Schalter in iOS-Grün
-- Hell- und Dunkelmodus werden beide unterstützt, reduzierte Bewegung wird respektiert
+Vorbild ist Apples eigene Weboberfläche (iCloud.com / apple.com): zurückhaltend statt verspielt.
+
+- Systemschrift (auf iPhone/Mac San Francisco), Farbpalette von apple.com (`#1D1D1F`, `#6E6E73`, `#F5F5F7`, Akzent `#0071E3`)
+- Kopfzeile als helle Glasleiste mit dunklen Icons, aktive App als kleiner Punkt wie im Dock
+- Hellgraue Seitenleiste wie in iCloud Drive, Auswahl grau hinterlegt mit blauem Icon
+- Feine Trennlinien, dezente Schatten, moderate Rundungen (8/12/16 px)
+- Hauptaktionen als Pillen-Buttons wie auf apple.com, Eingabefelder mit Fokusring
+- Hell- und Dunkelmodus, reduzierte Bewegung wird respektiert
 
 ## Installation (Docker)
 
@@ -34,7 +36,7 @@ Bei **Nextcloud AIO** heißt der Container `nextcloud-aio-nextcloud`:
 ## Manuell über die Weboberfläche
 
 1. *Apps → Anpassung* → **Custom CSS** aktivieren
-2. *Verwaltungseinstellungen → Design*: Primärfarbe `#007AFF`, Hintergrundfarbe `#F2F2F7`,
+2. *Verwaltungseinstellungen → Design*: Primärfarbe `#0071E3`, Hintergrundfarbe `#F5F5F7`,
    „Nutzer-Design deaktivieren“ anhaken
 3. Inhalt von `ios-theme.css` in das Feld **Custom CSS** einfügen und speichern
 

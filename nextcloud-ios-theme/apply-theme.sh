@@ -32,9 +32,9 @@ docker exec -u "$NC_USER" "$CONTAINER" sh -c \
 # Cache der Custom-CSS-App erneuern, damit Browser die neue Version laden
 occ config:app:set theming_customcss cachebuster --value="$(date +%s)"
 
-echo "==> Setze Theming: iOS-Blau und neutraler Hintergrund ..."
-occ theming:config primary_color "#007AFF" || occ theming:config color "#007AFF"
-occ theming:config background_color "#F2F2F7" 2>/dev/null \
+echo "==> Setze Theming: Apple-Blau und neutraler Hintergrund ..."
+occ theming:config primary_color "#0071E3" || occ theming:config color "#0071E3"
+occ theming:config background_color "#F5F5F7" 2>/dev/null \
 	|| echo "    (background_color wird von dieser Version nicht unterstützt, übersprungen)"
 occ theming:config background backgroundColor 2>/dev/null || true
 
