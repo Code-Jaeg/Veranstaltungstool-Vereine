@@ -55,9 +55,9 @@ body:not([data-theme-dark]):not([data-theme-dark-highcontrast]) {
 	--color-warning: #C93400 !important;
 	--ios-grouped-bg: #F2F2F7;
 	--ios-separator: rgba(60, 60, 67, 0.18);
-	/* Leisten: dunkler getöntes Glas statt fast weiß */
-	--ios-bar-bg: rgba(28, 28, 30, 0.62);
-	--ios-bar-text: #FFFFFF;
+	/* Leisten: mittelgraues Glas statt fast weiß, mit dunklen Icons */
+	--ios-bar-bg: rgba(199, 199, 204, 0.78);
+	--ios-bar-text: #1C1C1E;
 	--ios-panel-bg: rgba(209, 209, 214, 0.72);
 	--ios-glass-highlight: rgba(255, 255, 255, 0.45);
 }
@@ -126,6 +126,14 @@ header#header {
 #header .header-menu__trigger img,
 #header .header-menu__trigger svg {
 	filter: none !important;
+}
+
+/* Helles Erscheinungsbild: weiße Nextcloud-Icons dunkel einfärben */
+body:not([data-theme-dark]):not([data-theme-dark-highcontrast]) #header .app-menu-entry__icon,
+body:not([data-theme-dark]):not([data-theme-dark-highcontrast]) #header .app-menu-icon__icon,
+body:not([data-theme-dark]):not([data-theme-dark-highcontrast]) #header .header-menu__trigger img,
+body:not([data-theme-dark]):not([data-theme-dark-highcontrast]) #header .logo {
+	filter: invert(1) brightness(0.15) !important;
 }
 
 #header .app-menu-entry--active::before {
