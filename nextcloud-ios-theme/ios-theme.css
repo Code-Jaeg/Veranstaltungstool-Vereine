@@ -1,0 +1,302 @@
+/*
+ * Nextcloud – iOS-Designsprache (serverweit über die App "Custom CSS")
+ * Getestet gegen die CSS-Variablen von Nextcloud 28–31.
+ * Farben angelehnt an die iOS-Systemfarben, Schrift = System-Schrift des Geräts
+ * (auf Apple-Geräten San Francisco, sonst Inter/Segoe/Roboto).
+ */
+
+/* ---------- Gemeinsame Variablen (hell + dunkel) ---------- */
+:root,
+body,
+[data-theme-default],
+[data-theme-light],
+[data-theme-dark],
+[data-theme-light-highcontrast],
+[data-theme-dark-highcontrast] {
+	--font-face: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+		"Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+	--default-font-size: 15px !important;
+
+	--border-radius: 10px !important;
+	--border-radius-small: 8px !important;
+	--border-radius-element: 10px !important;
+	--border-radius-large: 14px !important;
+	--border-radius-container: 14px !important;
+	--border-radius-container-large: 22px !important;
+	--border-radius-rounded: 28px !important;
+	--border-radius-pill: 100px !important;
+	--body-container-radius: 22px !important;
+
+	--ios-blue: #007AFF;
+	--ios-green: #34C759;
+	--ios-red: #FF3B30;
+	--ios-orange: #FF9500;
+	--ios-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* ---------- Helles Erscheinungsbild ---------- */
+body:not([data-theme-dark]):not([data-theme-dark-highcontrast]) {
+	--color-main-background: #FFFFFF !important;
+	--color-main-background-rgb: 255, 255, 255 !important;
+	--color-main-background-translucent: rgba(255, 255, 255, 0.72) !important;
+	--color-main-background-blur: rgba(255, 255, 255, 0.72) !important;
+	--color-background-dark: #F2F2F7 !important;
+	--color-background-darker: #E5E5EA !important;
+	--color-background-hover: #F2F2F7 !important;
+	--color-main-text: #000000 !important;
+	--color-text-maxcontrast: #6C6C70 !important;
+	--color-border: #E5E5EA !important;
+	--color-border-dark: #C6C6C8 !important;
+	--color-border-maxcontrast: #8E8E93 !important;
+	--color-placeholder-light: #E5E5EA !important;
+	--color-placeholder-dark: #C7C7CC !important;
+	--color-success: #248A3D !important;
+	--color-error: #D70015 !important;
+	--color-warning: #C93400 !important;
+	--ios-grouped-bg: #F2F2F7;
+	--ios-separator: rgba(60, 60, 67, 0.18);
+}
+
+/* ---------- Dunkles Erscheinungsbild ---------- */
+body[data-theme-dark],
+body[data-theme-dark-highcontrast] {
+	--color-main-background: #1C1C1E !important;
+	--color-main-background-rgb: 28, 28, 30 !important;
+	--color-main-background-translucent: rgba(28, 28, 30, 0.72) !important;
+	--color-main-background-blur: rgba(28, 28, 30, 0.72) !important;
+	--color-background-dark: #2C2C2E !important;
+	--color-background-darker: #3A3A3C !important;
+	--color-background-hover: #2C2C2E !important;
+	--color-main-text: #FFFFFF !important;
+	--color-text-maxcontrast: #AEAEB2 !important;
+	--color-border: #38383A !important;
+	--color-border-dark: #48484A !important;
+	--color-border-maxcontrast: #8E8E93 !important;
+	--color-success: #30D158 !important;
+	--color-error: #FF453A !important;
+	--color-warning: #FF9F0A !important;
+	--ios-grouped-bg: #000000;
+	--ios-separator: rgba(84, 84, 88, 0.6);
+}
+
+/* ---------- Grundtypografie ---------- */
+body {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	letter-spacing: -0.01em;
+	background-color: var(--ios-grouped-bg);
+}
+
+h1, h2, h3,
+.app-content h2,
+.settings-section__name {
+	font-weight: 700 !important;
+	letter-spacing: -0.02em;
+}
+
+/* ---------- Kopfzeile: iOS-"Glas" ---------- */
+#header,
+header#header {
+	background-color: var(--color-main-background-translucent) !important;
+	-webkit-backdrop-filter: saturate(180%) blur(20px);
+	backdrop-filter: saturate(180%) blur(20px);
+	border-bottom: 0.5px solid var(--ios-separator);
+}
+
+#header .header-menu__trigger,
+#header .app-menu-entry,
+#header .app-menu-icon,
+#header .header-end *,
+#header .header-start * {
+	color: var(--color-main-text) !important;
+}
+
+#header .app-menu-entry__icon,
+#header .app-menu-icon__icon,
+#header .header-menu__trigger img,
+#header .header-menu__trigger svg {
+	filter: none !important;
+}
+
+body:not([data-theme-dark]):not([data-theme-dark-highcontrast]) #header .app-menu-entry__icon,
+body:not([data-theme-dark]):not([data-theme-dark-highcontrast]) #header .app-menu-icon__icon,
+body:not([data-theme-dark]):not([data-theme-dark-highcontrast]) #header .header-menu__trigger img {
+	filter: invert(1) !important;
+}
+
+#header .app-menu-entry--active::before {
+	background-color: var(--color-primary-element) !important;
+	border-radius: var(--border-radius-pill);
+}
+
+/* ---------- Hauptcontainer wie iOS-Karte ---------- */
+#content,
+#content-vue {
+	border-radius: var(--body-container-radius) !important;
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+	overflow: hidden;
+}
+
+/* ---------- Seitenleiste (Navigation) ---------- */
+.app-navigation,
+#app-navigation,
+#app-navigation-vue {
+	background-color: var(--color-main-background-translucent) !important;
+	-webkit-backdrop-filter: saturate(180%) blur(20px);
+	backdrop-filter: saturate(180%) blur(20px);
+	border-right: 0.5px solid var(--ios-separator) !important;
+}
+
+.app-navigation-entry,
+.app-navigation-entry-wrapper .app-navigation-entry {
+	border-radius: var(--border-radius) !important;
+	transition: background-color 0.2s var(--ios-ease);
+}
+
+.app-navigation-entry.active,
+.app-navigation-entry--active,
+.app-navigation-entry.app-navigation-entry--active {
+	background-color: var(--color-primary-element) !important;
+}
+
+.app-navigation-entry.active *,
+.app-navigation-entry--active * {
+	color: var(--color-primary-element-text) !important;
+}
+
+/* ---------- Rechte Seitenleiste / Details ---------- */
+.app-sidebar,
+#app-sidebar,
+#app-sidebar-vue {
+	background-color: var(--color-main-background-translucent) !important;
+	-webkit-backdrop-filter: saturate(180%) blur(20px);
+	backdrop-filter: saturate(180%) blur(20px);
+	border-left: 0.5px solid var(--ios-separator) !important;
+}
+
+/* ---------- Buttons ---------- */
+.button-vue,
+button:not(.button-vue):not([class*="icon"]):not(.action-item__menutoggle),
+input[type="submit"],
+input[type="button"] {
+	border-radius: var(--border-radius-pill) !important;
+	font-weight: 600 !important;
+	transition: transform 0.12s var(--ios-ease), opacity 0.12s var(--ios-ease),
+		background-color 0.2s var(--ios-ease) !important;
+}
+
+.button-vue:active,
+button:active,
+input[type="submit"]:active {
+	transform: scale(0.97);
+	opacity: 0.8;
+}
+
+.button-vue--vue-primary,
+.button-vue--primary,
+button.primary,
+input[type="submit"].primary {
+	box-shadow: none !important;
+}
+
+/* ---------- Eingabefelder ---------- */
+.input-field__input,
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="search"],
+input[type="url"],
+input[type="tel"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+	border-radius: var(--border-radius) !important;
+	border: 0.5px solid var(--color-border-dark) !important;
+	background-color: var(--color-background-dark) !important;
+	box-shadow: none !important;
+}
+
+.input-field__input:focus,
+input:focus-visible,
+textarea:focus-visible {
+	border-color: var(--color-primary-element) !important;
+	box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.25) !important;
+}
+
+/* ---------- iOS-Schalter (Toggles) ---------- */
+.checkbox-radio-switch-switch .checkbox-radio-switch__icon svg {
+	transition: color 0.2s var(--ios-ease);
+}
+
+.checkbox-radio-switch-switch.checkbox-radio-switch--checked .checkbox-radio-switch__icon {
+	color: var(--ios-green) !important;
+}
+
+/* ---------- Menüs, Popover, Dialoge ---------- */
+.v-popper__inner,
+.popover__inner,
+.action-item__popper .v-popper__inner,
+.popovermenu,
+.header-menu__content {
+	border-radius: var(--border-radius-large) !important;
+	background-color: var(--color-main-background-translucent) !important;
+	-webkit-backdrop-filter: saturate(180%) blur(30px);
+	backdrop-filter: saturate(180%) blur(30px);
+	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18) !important;
+	border: 0.5px solid var(--ios-separator) !important;
+}
+
+.modal-container,
+.oc-dialog,
+.dialog__modal .modal-container {
+	border-radius: var(--border-radius-container-large) !important;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25) !important;
+}
+
+.modal-mask {
+	-webkit-backdrop-filter: blur(6px);
+	backdrop-filter: blur(6px);
+}
+
+/* ---------- Listen wie iOS (Dateien, Einstellungen) ---------- */
+.files-list__row,
+.list-item,
+.list-item__wrapper .list-item {
+	border-radius: var(--border-radius) !important;
+}
+
+.files-list__row td,
+.files-list__row {
+	border-bottom-color: var(--ios-separator) !important;
+}
+
+.settings-section,
+.section {
+	background-color: var(--color-main-background);
+	border-radius: var(--border-radius-large);
+}
+
+/* ---------- Login-Seite ---------- */
+body#body-login .wrapper,
+body#body-login .login-box,
+body#body-login .guest-box {
+	border-radius: var(--border-radius-container-large) !important;
+	background-color: var(--color-main-background-translucent) !important;
+	-webkit-backdrop-filter: saturate(180%) blur(30px);
+	backdrop-filter: saturate(180%) blur(30px);
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ---------- Scrollbars dezent ---------- */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--color-border-maxcontrast) transparent;
+}
+
+/* ---------- Barrierefreiheit: reduzierte Bewegung respektieren ---------- */
+@media (prefers-reduced-motion: reduce) {
+	* {
+		transition: none !important;
+	}
+}
