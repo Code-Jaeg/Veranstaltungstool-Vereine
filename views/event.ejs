@@ -1,5 +1,4 @@
 <%- include('partials/head', { title: event.title, navTitle: event.organization || event.title }) %>
-<% var now = new Date(); var days = {}; shifts.forEach(function (s) { var d = s.starts_at.slice(0, 10); (days[d] = days[d] || []).push(s); }); %>
 
 <h1 class="large-title"><%= event.title %></h1>
 <div class="hero">
@@ -11,53 +10,32 @@
   <% if (event.description) { %><p><%= event.description %></p><% } %>
 </div>
 
-<h2 class="section-header big" id="dienste">Dienste</h2>
 <% if (!shifts.length) { %>
+  <h2 class="section-header big" id="dienste">Dienste</h2>
   <div class="group"><div class="empty">Es wurden noch keine Dienste angelegt.</div></div>
-<% } %>
-<% Object.keys(days).forEach(function (day) { %>
-  <div class="section-header"><%= u.fmtDate(day) %></div>
+<% } else { %>
+<form method="post" action="/e/<%= event.public_token %>/anmelden" id="anmelden">
+  <p class="muted small" style="margin:16px 4px 0">Tippe alle Dienste an, bei denen du helfen möchtest – du trägst dich danach mit einem Formular für alle zusammen ein. Ist ein Dienst voll, kommst du auf die Warteliste und rückst automatisch nach.</p>
+
+  <%- include('partials/pick', { list: shifts, selected: selected, values: values, showPeople: true }) %>
+
+  <div class="section-header" id="daten">Deine Angaben</div>
   <div class="group">
-  <% days[day].forEach(function (s) { var past = u.toDate(s.ends_at) < now; var isOpen = openShift === s.id; %>
-    <details id="shift-<%= s.id %>" <%= isOpen ? 'open' : '' %> <%= isOpen ? 'data-scroll' : '' %>>
-      <summary class="row">
-        <div class="label">
-          <div><%= s.title %></div>
-          <div class="shift-time"><%= u.fmtTime(s.starts_at) %>–<%= u.fmtTime(s.ends_at) %> Uhr<% if (s.ends_at.slice(0,10) !== day) { %> (+1)<% } %></div>
-          <div class="progress"><span style="width:<%= Math.min(100, Math.round(s.active.length / s.capacity * 100)) %>%"></span></div>
-        </div>
-        <%- include('partials/badge', { s: s }) %>
-        <span class="chev"></span>
-      </summary>
-      <div class="details-body">
-        <% if (s.description) { %><p class="muted" style="margin-top:0;white-space:pre-line"><%= s.description %></p><% } %>
-        <div class="people">
-          <% s.active.forEach(function (g) { %><span class="chip"><%= u.publicName(g.name) %></span><% }) %>
-          <% for (var i = 0; i < s.free; i++) { %><span class="chip freeslot">frei</span><% } %>
-        </div>
-        <% if (past) { %>
-          <p class="muted small">Dieser Dienst ist bereits vorbei.</p>
-        <% } else if (s.free > 0) { var v = isOpen ? values : {}; %>
-          <form method="post" action="/e/<%= event.public_token %>/shifts/<%= s.id %>/signup">
-            <div class="inset">
-              <label class="field"><span>Name</span><input name="name" required maxlength="100" autocomplete="name" placeholder="Vor- und Nachname" value="<%= v.name || '' %>"></label>
-              <label class="field"><span>E-Mail</span><input type="email" name="email" required autocomplete="email" placeholder="für Bestätigung & Erinnerung" value="<%= v.email || '' %>"></label>
-              <label class="field"><span>Telefon</span><input type="tel" name="phone" autocomplete="tel" placeholder="optional" value="<%= v.phone || '' %>"></label>
-              <label class="field"><span>Bemerkung</span><input name="note" maxlength="500" placeholder="optional" value="<%= v.note || '' %>"></label>
-            </div>
-            <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
-            <label class="check" style="padding-left:0;padding-right:0"><input type="checkbox" name="privacy" value="1" required>
-              <span>Meine Kontaktdaten dürfen zur Organisation dieses Dienstes gespeichert werden. Sichtbar sind sie nur für die Veranstaltungsleitung; öffentlich erscheint nur „<%= 'Vorname N.' %>“.</span></label>
-            <button class="btn" type="submit" style="margin-top:4px">Für diesen Dienst eintragen</button>
-          </form>
-        <% } else { %>
-          <p class="muted small">Dieser Dienst ist voll besetzt – danke! Schau gern bei den anderen Diensten.</p>
-        <% } %>
-      </div>
-    </details>
-  <% }) %>
+    <label class="field"><span>Name</span><input name="name" required maxlength="100" autocomplete="name" placeholder="Vor- und Nachname" value="<%= values.name || '' %>"></label>
+    <label class="field"><span>E-Mail</span><input type="email" name="email" required autocomplete="email" placeholder="für Bestätigung & Erinnerung" value="<%= values.email || '' %>"></label>
+    <label class="field"><span>Telefon</span><input type="tel" name="phone" autocomplete="tel" placeholder="optional, für kurzfristige Absprachen" value="<%= values.phone || '' %>"></label>
+    <label class="field"><span>Bemerkung</span><input name="note" maxlength="300" placeholder="optional" value="<%= values.note || '' %>"></label>
   </div>
-<% }) %>
+  <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
+  <div class="group" style="margin-top:12px">
+    <label class="check"><input type="checkbox" name="privacy" value="1" required <%= values.privacy ? 'checked' : '' %>>
+      <span>Meine Kontaktdaten dürfen zur Organisation gespeichert werden. Sichtbar sind sie nur für das Organisationsteam; öffentlich erscheint nur „Vorname N.“. <a href="/datenschutz">Datenschutz</a></span></label>
+  </div>
+  <div class="submitbar">
+    <button class="btn" type="submit" data-count-label="Eintragen">Eintragen</button>
+  </div>
+</form>
+<% } %>
 
 <h2 class="section-header big" id="pinnwand">Pinnwand</h2>
 <div class="group">
@@ -81,5 +59,5 @@
   <button class="btn secondary" type="submit">Veröffentlichen</button>
 </form>
 
-<div class="section-footer center" style="margin-top:24px">Schon eingetragen? Über den Link in deiner Bestätigungsmail kannst du deinen Dienst ansehen oder absagen.</div>
+<div class="section-footer center" style="margin-top:24px">Schon eingetragen? Über den Link in deiner Bestätigungsmail siehst du alle deine Dienste, kannst weitere hinzufügen oder absagen.</div>
 <%- include('partials/foot') %>

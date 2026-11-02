@@ -6,18 +6,22 @@ Schlanke **Webanwendung** (keine App) im iOS-Stil, mit der Vereine – z. B. der
 
 | Für Helferinnen & Helfer | Für die Veranstaltungsleitung |
 |---|---|
-| Dienste nach Tag gruppiert, Belegung mit Fortschrittsbalken | Veranstaltung anlegen, persönlicher Verwaltungslink per Mail |
-| Selbst eintragen mit Name, E-Mail, Telefon, Bemerkung | Dienste anlegen, bearbeiten und löschen, auch als Schichtfolge („4 × 2 Std.“) |
-| **Bestätigungsmail mit `.ics`-Kalendereintrag und PDF-Dienstbestätigung** | Alle Kontaktdaten einsehen, Personen manuell ein- und austragen |
-| **Erinnerungsmails** (z. B. 48 Std. und 3 Std. vorher), ebenfalls mit `.ics` und PDF | **Sofortige Mail bei Ausfall** mit Grund und Kontakt sowie Anzahl freier Plätze |
-| Eigene Anmeldung ansehen, `.ics`/PDF herunterladen, **absagen** | Pinnwand-Beitrag, optional als **Rundmail** an alle Eingetragenen |
-| Pinnwand zur Kommunikation (Fragen, Fahrgemeinschaften …) | Export: Dienstplan als PDF (mit Kontakten oder zum Aushang), CSV für Excel, `.ics` für alle Dienste |
-| Hell- und Dunkelmodus, optimiert fürs Smartphone, zum Homescreen hinzufügbar | Optionaler n8n-Webhook bei Anmeldung und Absage |
+| Dienste nach Tag gruppiert, Belegung mit Fortschrittsbalken und Mindestmarke | Veranstaltung anlegen oder **vorhandene kopieren** (z. B. Fest vom Vorjahr – alle Dienste werden aufs neue Datum verschoben) |
+| **Mehrere Dienste in einem Schritt** antippen, Name und Mail nur einmal eingeben | Dienste mit **Mindest- und Idealbesetzung** sowie Anforderung („1 Person mit Kassenerfahrung“) |
+| **Mitbringliste**: Menge wählen („2× Kuchen“) mit Notiz („Apfelkuchen, glutenfrei“) | **Mitbringposten** mit Menge und Abgabezeit |
+| **Warteliste** bei vollen Diensten – automatisches Nachrücken bei Absagen mit Mail | **Mitorganisatoren** mit eigenem Verwaltungslink, **Verlauf**: wer hat was geändert |
+| Persönliche Seite mit allen eigenen Diensten, weitere Dienste mit einem Klick hinzufügen, absagen | **„Ersatz suchen“**: alle Helfer der Veranstaltung, die beim Dienst noch nicht dabei sind, per Mail anfragen (max. 1×/Stunde) |
+| Bestätigung mit `.ics` und PDF (mit QR-Code zur persönlichen Seite) | **Kurzbericht** wenige Tage vorher: welche Dienste unterbesetzt sind, Absagen, Wartelisten |
+| **Abo-Kalender** (webcal), der sich bei Änderungen und Absagen selbst aktualisiert | Sofortige Mail bei Ausfall an Leitung **und** Mitorganisatoren |
+| Erinnerungsmails (z. B. 48 Std. und 3 Std. vorher) | **QR-Code**, **Plakat „Helfer gesucht“** (PDF) und Aushang-Dienstplan mit QR-Code |
+| Pinnwand, Hell-/Dunkelmodus, fürs Smartphone gemacht | Pinnwand und Rundmail, Export als PDF/CSV/ICS, optionaler n8n-Webhook |
 
-Bei einer Absage bekommt die Person eine `.ics`-Datei mit `METHOD:CANCEL`. Damit verschwindet der Termin wieder aus ihrem Kalender.
+Bei einer Absage bekommt die Person eine `.ics`-Datei mit `METHOD:CANCEL`, damit der Termin aus ihrem Kalender verschwindet. Im Abo-Kalender passiert das automatisch.
+
+Links aus Mails der ersten Version (`/s/…`) leiten auf die neue persönliche Seite (`/h/…`) weiter. Bestehende Datenbanken werden beim Start automatisch migriert (`PRAGMA user_version`).
 
 ### Datenschutz (DSGVO)
-- Wer sich einträgt, muss der Verarbeitung der Daten zustimmen. Öffentlich erscheint nur „Vorname N.“, die Kontaktdaten sieht nur die Veranstaltungsleitung.
+- Wer sich einträgt, muss der Verarbeitung der Daten zustimmen. Öffentlich und auf dem Aushang erscheint nur „Vorname N.“, die Kontaktdaten sieht nur das Organisationsteam.
 - Alle Daten werden **automatisch gelöscht**, `DATA_RETENTION_DAYS` Tage nach der Veranstaltung (Standard: 30). Manuell löschen geht jederzeit.
 - Der Zugang läuft über nicht erratbare Links (Tokens): einen öffentlichen Link, einen Verwaltungslink und einen persönlichen Link je Anmeldung. Gesetzt sind außerdem `noindex`, `Referrer-Policy: no-referrer`, eine Content-Security-Policy, eine Prüfung der Anfrage-Herkunft (Origin-Check), ein Rate-Limit und ein Honeypot gegen Spam.
 - Mit `CREATE_PASSWORD` können nur Vereinsmitglieder, die das Passwort kennen, neue Veranstaltungen anlegen.
@@ -47,6 +51,7 @@ Die Daten (SQLite) liegen im Volume `vereinsdienste-data`. Für ein Backup genü
 | `CREATE_PASSWORD` | Passwort zum Anlegen von Veranstaltungen (leer = offen) |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM` | Mailversand. Ohne `SMTP_HOST` werden Mails als `.eml` in `/data/outbox` abgelegt (zum Testen). |
 | `REMINDER_HOURS` | Wann vor Dienstbeginn erinnert wird, z. B. `48,3` |
+| `REPORT_DAYS_BEFORE` | Kurzbericht an die Leitung so viele Tage vor der Veranstaltung (Standard 3, `0` = aus) |
 | `DATA_RETENTION_DAYS` | Automatisches Löschen nach X Tagen (0 = nie) |
 | `N8N_WEBHOOK_URL` | Optionaler Webhook (siehe unten) |
 | `MAIL_WEBHOOK_URL` | Mails an n8n übergeben statt SMTP |

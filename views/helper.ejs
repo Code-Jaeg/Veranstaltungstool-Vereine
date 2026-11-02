@@ -1,0 +1,66 @@
+<%- include('partials/head', { title: 'Meine Dienste', back: { href: '/e/' + event.public_token, label: 'Übersicht' } }) %>
+<% var now = new Date();
+   var current = entries.filter(function (e) { return e.signup.status !== 'cancelled'; });
+   var cancelled = entries.filter(function (e) { return e.signup.status === 'cancelled'; }); %>
+<h1 class="large-title">Meine Dienste</h1>
+<p class="subtitle"><%= event.title %> · <%= u.fmtDate(event.event_date) %></p>
+<% if (hint) { %><div class="banner warn"><%= hint %></div><% } %>
+
+<div class="section-header">Hallo <%= helper.name %></div>
+<div class="group">
+  <% if (!current.length) { %><div class="empty">Du bist gerade für keinen Dienst eingetragen.</div><% } %>
+  <% current.forEach(function (e) { var s = e.shift, g = e.signup, waiting = g.status === 'waiting', item = s.kind === 'item', past = u.toDate(s.ends_at) < now; %>
+    <div class="pick" id="eintrag-<%= g.id %>">
+      <div class="row">
+        <div class="icon <%= waiting ? 'orange' : 'green' %>"><%= waiting ? '⏳' : '✓' %></div>
+        <div class="label">
+          <div><%= item ? g.quantity + '× ' + s.title + ' mitbringen' : s.title %></div>
+          <div class="shift-time"><% if (item) { %>bis <%= u.fmtShortDate(s.starts_at) %>, <%= u.fmtTime(s.starts_at) %> Uhr<% } else { %><%= u.fmtShortDate(s.starts_at) %> · <%= u.fmtTime(s.starts_at) %>–<%= u.fmtTime(s.ends_at) %> Uhr<% } %></div>
+          <% if (waiting) { %><div class="detail waitnote">Warteliste, Platz <%= e.position %> – du rückst automatisch nach und bekommst eine Mail.</div><% } %>
+          <% if (g.note) { %><div class="detail">„<%= g.note %>“</div><% } %>
+          <% if (s.description) { %><div class="detail" style="white-space:pre-line"><%= s.description %></div><% } %>
+        </div>
+      </div>
+      <% if (!past) { %>
+      <details class="pick-more">
+        <summary class="linkbtn red small"><%= waiting ? 'Von der Warteliste nehmen' : 'Ich kann leider nicht' %></summary>
+        <form method="post" action="/h/<%= helper.token %>/signups/<%= g.id %>/cancel" data-confirm="<%= waiting ? 'Von der Warteliste nehmen?' : 'Wirklich absagen? Die Veranstaltungsleitung wird informiert.' %>">
+          <% if (!waiting) { %><div class="inset"><label class="field stack"><span>Grund (optional, nur für die Leitung)</span><textarea name="reason" maxlength="500" placeholder="z. B. krank, Terminüberschneidung …"></textarea></label></div><% } %>
+          <button class="btn danger-soft" type="submit" style="margin-top:4px"><%= waiting ? 'Von der Warteliste nehmen' : 'Absagen' %></button>
+        </form>
+      </details>
+      <% } %>
+    </div>
+  <% }) %>
+  <% cancelled.forEach(function (e) { %>
+    <div class="row"><div class="icon grey">✕</div><div class="label"><span class="strike"><%= e.shift.kind === 'item' ? e.signup.quantity + '× ' + e.shift.title : e.shift.title %></span><div class="detail">abgesagt</div></div></div>
+  <% }) %>
+</div>
+
+<% if (current.length) { %>
+<div class="section-header">Kalender &amp; Bestätigung</div>
+<div class="group">
+  <a class="row link" href="<%= webcalUrl %>"><div class="icon red">📅</div><div class="label">Kalender abonnieren<div class="detail">aktualisiert sich bei Änderungen und Absagen von selbst</div></div></a>
+  <a class="row link" href="<%= calendarUrl %>"><div class="icon grey">⬇︎</div><div class="label">Als Kalenderdatei laden (.ics)</div></a>
+  <a class="row link" href="/h/<%= helper.token %>/dienstbestaetigung.pdf"><div class="icon orange">📄</div><div class="label">Dienstbestätigung (PDF)</div></a>
+</div>
+<% if (config.reminderHours.length) { %><div class="section-footer">Du bekommst <%= config.reminderHours.map(function (h) { return h >= 24 ? Math.round(h / 24) + ' Tag' + (h >= 48 ? 'e' : '') : h + ' Std.'; }).join(' und ') %> vorher eine Erinnerung per Mail.</div><% } %>
+<% } %>
+
+<% if (open.length) { %>
+<form method="post" action="/h/<%= helper.token %>/anmelden" id="anmelden">
+  <h2 class="section-header big">Noch mehr helfen?</h2>
+  <p class="muted small" style="margin:0 4px">Deine Daten sind schon hinterlegt – einfach antippen und eintragen.</p>
+  <%- include('partials/pick', { list: open, selected: selected, values: {}, showPeople: false }) %>
+  <div class="submitbar"><button class="btn" type="submit" data-count-label="Eintragen">Eintragen</button></div>
+</form>
+<% } %>
+
+<div class="section-header">Kontakt</div>
+<div class="group">
+  <div class="row"><div class="icon grey">👤</div><div class="label"><%= event.admin_name %><div class="detail">Veranstaltungsleitung</div></div></div>
+  <% if (event.admin_phone) { %><a class="row link" href="tel:<%= event.admin_phone %>"><div class="icon green">📞</div><div class="label"><%= event.admin_phone %></div></a><% } %>
+  <a class="row link" href="mailto:<%= event.admin_email %>"><div class="icon">✉️</div><div class="label"><%= event.admin_email %></div></a>
+</div>
+<div class="section-footer">Bewahre diesen Link auf – er ist dein persönlicher Zugang. Er steht auch in deiner Bestätigungsmail.</div>
+<%- include('partials/foot') %>

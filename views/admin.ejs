@@ -1,55 +1,63 @@
 <%- include('partials/head', { title: 'Verwaltung: ' + event.title, navTitle: 'Verwaltung' }) %>
-<% var now = new Date(); var base = '/admin/' + event.admin_token; %>
+<% var now = new Date();
+   var duty = shifts.filter(function (s) { return s.kind !== 'item'; });
+   var items = shifts.filter(function (s) { return s.kind === 'item'; });
+   function since(ts) { return new Date(ts.replace(' ', 'T') + 'Z').toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); } %>
 <h1 class="large-title"><%= event.title %></h1>
-<p class="subtitle"><%= u.fmtDate(event.event_date) %><% if (event.location) { %> · <%= event.location %><% } %></p>
+<p class="subtitle"><%= u.fmtDate(event.event_date) %><% if (event.location) { %> · <%= event.location %><% } %> · angemeldet als <%= actor %></p>
 
-<div class="stats">
+<div class="stats four">
   <div class="stat"><b><%= stats.filled %>/<%= stats.needed %></b><small>Plätze besetzt</small></div>
-  <div class="stat"><b><%= stats.shifts %></b><small>Dienste</small></div>
+  <div class="stat"><b style="color:<%= stats.critical ? 'var(--red)' : 'var(--green)' %>"><%= stats.critical %></b><small>unterbesetzt</small></div>
+  <div class="stat"><b style="color:<%= stats.waiting ? 'var(--orange)' : 'inherit' %>"><%= stats.waiting %></b><small>Warteliste</small></div>
   <div class="stat"><b style="color:<%= stats.cancelled ? 'var(--red)' : 'inherit' %>"><%= stats.cancelled %></b><small>Absagen</small></div>
 </div>
 
-<div class="section-header">Link für Helferinnen & Helfer</div>
-<div class="group"><div class="row copy">
-  <input id="publicUrl" value="<%= publicUrl %>" readonly>
-  <button class="btn small" type="button" data-copy="publicUrl" data-share>Teilen</button>
-</div></div>
-<div class="section-footer">Diesen Link per WhatsApp, Mail oder Aushang verteilen. <a href="<%= publicUrl %>">Ansicht öffnen ›</a></div>
+<div class="section-header">Link für Helferinnen &amp; Helfer</div>
+<div class="group">
+  <div class="row copy">
+    <input id="publicUrl" value="<%= publicUrl %>" readonly>
+    <button class="btn small" type="button" data-copy="publicUrl" data-share>Teilen</button>
+  </div>
+  <div class="row qrrow">
+    <img class="qr" src="<%= qr %>" alt="QR-Code zur Anmeldeseite" width="120" height="120">
+    <div class="label">
+      <div>QR-Code für Aushang &amp; Elternbrief</div>
+      <div class="detail"><a href="<%= base %>/plakat.pdf">Plakat „Helfer gesucht“ (PDF)</a> · <a href="<%= base %>/qr.png">QR-Code als Bild</a></div>
+    </div>
+  </div>
+</div>
+<div class="section-footer">Per WhatsApp, Mail oder Aushang verteilen. <a href="<%= publicUrl %>">Ansicht öffnen ›</a></div>
 
-<div class="section-header">Dein Verwaltungslink</div>
+<div class="section-header">Dein persönlicher Verwaltungslink</div>
 <div class="group"><div class="row copy">
   <input id="adminUrl" value="<%= adminUrl %>" readonly>
   <button class="btn small secondary" type="button" data-copy="adminUrl">Kopieren</button>
 </div></div>
-<div class="section-footer">⚠️ Wer diesen Link hat, kann alles bearbeiten und sieht alle Kontaktdaten. Nicht weitergeben – bei Mitorganisatoren nur an vertraute Personen.</div>
+<div class="section-footer">⚠️ Nicht weitergeben – wer den Link hat, sieht alle Kontaktdaten. Weitere Organisatoren bekommen unten einen eigenen Zugang.</div>
 
-<h2 class="section-header big" id="dienste">Dienste</h2>
-<% if (!shifts.length) { %><div class="group"><div class="empty">Noch keine Dienste – lege unten den ersten an.</div></div><% } %>
-<% if (shifts.length) { %><div class="group">
-<% shifts.forEach(function (s) { var cancelled = s.signups.filter(function (g) { return g.status !== 'active'; }); %>
-  <details id="shift-<%= s.id %>">
-    <summary class="row">
-      <div class="label">
-        <div><%= s.title %></div>
-        <div class="shift-time"><%= u.fmtShortDate(s.starts_at) %> · <%= u.fmtTime(s.starts_at) %>–<%= u.fmtTime(s.ends_at) %> Uhr</div>
-      </div>
-      <% if (cancelled.length) { %><span class="badge none" title="Absagen"><%= cancelled.length %> ✕</span><% } %>
-      <%- include('partials/badge', { s: s }) %>
-      <span class="chev"></span>
-    </summary>
-    <div class="details-body">
+<%
+  function people(s, isItem) { %>
       <div class="inset">
         <% if (!s.active.length) { %><div class="row"><div class="label muted">Noch niemand eingetragen.</div></div><% } %>
         <% s.active.forEach(function (g) { %>
           <div class="row">
-            <div class="label"><b><%= g.name %></b>
+            <div class="label"><b><%= isItem ? g.quantity + '× ' : '' %><%= g.name %></b>
               <div class="detail"><a href="mailto:<%= g.email %>"><%= g.email %></a><% if (g.phone) { %> · <a href="tel:<%= g.phone %>"><%= g.phone %></a><% } %></div>
               <% if (g.note) { %><div class="detail">„<%= g.note %>“</div><% } %>
             </div>
             <form method="post" action="<%= base %>/signups/<%= g.id %>/delete" data-confirm="<%= g.name %> austragen? Die Person wird per Mail informiert."><button class="linkbtn red" type="submit">Austragen</button></form>
           </div>
         <% }) %>
-        <% cancelled.forEach(function (g) { %>
+        <% s.waiting.forEach(function (g, i) { %>
+          <div class="row">
+            <div class="label"><%= g.name %> <span class="badge low">Warteliste <%= i + 1 %></span>
+              <div class="detail"><a href="mailto:<%= g.email %>"><%= g.email %></a><% if (g.phone) { %> · <a href="tel:<%= g.phone %>"><%= g.phone %></a><% } %></div>
+            </div>
+            <form method="post" action="<%= base %>/signups/<%= g.id %>/delete" data-confirm="<%= g.name %> von der Warteliste nehmen?"><button class="linkbtn" type="submit">Entfernen</button></form>
+          </div>
+        <% }) %>
+        <% s.cancelled.forEach(function (g) { %>
           <div class="row">
             <div class="label"><span class="strike"><%= g.name %></span> <span class="badge none">abgesagt</span>
               <div class="detail"><a href="mailto:<%= g.email %>"><%= g.email %></a><% if (g.phone) { %> · <a href="tel:<%= g.phone %>"><%= g.phone %></a><% } %></div>
@@ -59,8 +67,14 @@
           </div>
         <% }) %>
       </div>
+<% }
 
-      <% if (s.free > 0) { %>
+  function actions(s, isItem) { var past = u.toDate(s.ends_at) < now; %>
+      <% if (s.free > 0 && !past) { %>
+      <form method="post" action="<%= base %>/shifts/<%= s.id %>/call" data-confirm="Alle Helfer dieser Veranstaltung, die hier noch nicht dabei sind, per Mail um Unterstützung bitten?">
+        <button class="btn small secondary" type="submit" style="margin-top:10px">📣 Ersatz suchen<%= s.last_call_at ? ' (zuletzt ' + since(s.last_call_at) + ')' : '' %></button>
+      </form>
+      <% } %>
       <details>
         <summary class="row action" style="padding-left:0">+ Person manuell eintragen</summary>
         <form method="post" action="<%= base %>/shifts/<%= s.id %>/signups">
@@ -68,53 +82,118 @@
             <label class="field"><span>Name</span><input name="name" required maxlength="100"></label>
             <label class="field"><span>E-Mail</span><input type="email" name="email" required></label>
             <label class="field"><span>Telefon</span><input type="tel" name="phone"></label>
-            <label class="field"><span>Bestätigung</span><input class="switch" type="checkbox" name="notify" value="1" checked style="flex:none"><small class="muted">Mail mit .ics/PDF senden</small></label>
+            <% if (isItem) { %>
+              <label class="field"><span>Menge</span><input type="number" name="quantity" min="1" max="100" value="1"></label>
+              <label class="field"><span>Was genau</span><input name="note" maxlength="300"></label>
+            <% } else if (s.free < 1) { %>
+              <label class="field"><span>Warteliste</span><input class="switch" type="checkbox" name="waitlist" value="1" checked style="flex:none"><small class="muted">Dienst ist voll</small></label>
+            <% } %>
+            <label class="field"><span>Bestätigung</span><input class="switch" type="checkbox" name="notify" value="1" checked style="flex:none"><small class="muted">Mail mit .ics/PDF</small></label>
           </div>
           <button class="btn secondary" type="submit" style="margin-top:4px">Eintragen</button>
         </form>
       </details>
-      <% } %>
-
       <details>
-        <summary class="row action" style="padding-left:0">✎ Dienst bearbeiten</summary>
+        <summary class="row action" style="padding-left:0">✎ <%= isItem ? 'Posten' : 'Dienst' %> bearbeiten</summary>
         <form method="post" action="<%= base %>/shifts/<%= s.id %>">
           <div class="inset">
             <label class="field"><span>Bezeichnung</span><input name="title" required maxlength="120" value="<%= s.title %>"></label>
-            <label class="field"><span>Beginn</span><input type="datetime-local" name="starts_at" required value="<%= s.starts_at %>"></label>
-            <label class="field"><span>Ende</span><input type="datetime-local" name="ends_at" required value="<%= s.ends_at %>"></label>
-            <label class="field"><span>Personen</span><input type="number" name="capacity" min="1" max="500" required value="<%= s.capacity %>"></label>
-            <label class="field stack"><span>Hinweise</span><textarea name="description" maxlength="1000"><%= s.description || '' %></textarea></label>
+            <% if (isItem) { %>
+              <label class="field"><span>Bis wann</span><input type="datetime-local" name="starts_at" required value="<%= s.starts_at %>"></label>
+              <label class="field"><span>Menge</span><input type="number" name="capacity" min="1" max="500" required value="<%= s.capacity %>"></label>
+            <% } else { %>
+              <label class="field"><span>Beginn</span><input type="datetime-local" name="starts_at" required value="<%= s.starts_at %>"></label>
+              <label class="field"><span>Ende</span><input type="datetime-local" name="ends_at" required value="<%= s.ends_at %>"></label>
+              <label class="field"><span>Plätze (ideal)</span><input type="number" name="capacity" min="1" max="500" required value="<%= s.capacity %>"></label>
+              <label class="field"><span>Mindestens</span><input type="number" name="min_capacity" min="0" max="500" value="<%= s.min_capacity || '' %>" placeholder="wie ideal"></label>
+            <% } %>
+            <label class="field"><span><%= isItem ? 'Hinweis' : 'Gesucht' %></span><input name="requirement" maxlength="200" value="<%= s.requirement || '' %>" placeholder="<%= isItem ? 'z. B. bitte ohne Nüsse' : 'z. B. 1 Person mit Kassenerfahrung' %>"></label>
+            <label class="field stack"><span>Beschreibung</span><textarea name="description" maxlength="1000"><%= s.description || '' %></textarea></label>
           </div>
-          <div class="btn-row">
-            <button class="btn secondary" type="submit" style="margin-top:4px">Speichern</button>
-          </div>
+          <button class="btn secondary" type="submit" style="margin-top:4px">Speichern</button>
         </form>
-        <form method="post" action="<%= base %>/shifts/<%= s.id %>/delete" data-confirm="Dienst „<%= s.title %>“ inklusive aller Anmeldungen löschen? Eingetragene werden NICHT automatisch informiert.">
-          <button class="btn danger-soft" type="submit" style="margin-top:8px">Dienst löschen</button>
+        <form method="post" action="<%= base %>/shifts/<%= s.id %>/delete" data-confirm="„<%= s.title %>“ inklusive aller Einträge löschen? Eingetragene werden NICHT automatisch informiert.">
+          <button class="btn danger-soft" type="submit" style="margin-top:8px">Löschen</button>
         </form>
       </details>
-    </div>
+<% } %>
+
+<h2 class="section-header big" id="dienste">Dienste</h2>
+<% if (!duty.length) { %><div class="group"><div class="empty">Noch keine Dienste – lege unten den ersten an.</div></div><% } else { %>
+<div class="group">
+<% duty.forEach(function (s) { %>
+  <details id="shift-<%= s.id %>">
+    <summary class="row">
+      <div class="label">
+        <div><%= s.title %></div>
+        <div class="shift-time"><%= u.fmtShortDate(s.starts_at) %> · <%= u.fmtTime(s.starts_at) %>–<%= u.fmtTime(s.ends_at) %> Uhr<% if (s.min_capacity > 0 && s.min_capacity < s.capacity) { %> · mind. <%= s.min_capacity %><% } %></div>
+        <% if (s.requirement) { %><div class="detail">Gesucht: <%= s.requirement %></div><% } %>
+      </div>
+      <% if (s.waiting.length) { %><span class="badge low" title="Warteliste">+<%= s.waiting.length %></span><% } %>
+      <% if (s.cancelled.length) { %><span class="badge none" title="Absagen"><%= s.cancelled.length %> ✕</span><% } %>
+      <%- include('partials/badge', { s: s }) %>
+      <span class="chev"></span>
+    </summary>
+    <div class="details-body"><% people(s, false); actions(s, false); %></div>
   </details>
 <% }) %>
-</div><% } %>
+</div>
+<% } %>
+
+<% if (items.length) { %>
+<h2 class="section-header big" id="mitbringen">Mitbringliste</h2>
+<div class="group">
+<% items.forEach(function (s) { %>
+  <details id="shift-<%= s.id %>">
+    <summary class="row">
+      <div class="label">
+        <div><%= s.title %></div>
+        <div class="shift-time">bis <%= u.fmtShortDate(s.starts_at) %>, <%= u.fmtTime(s.starts_at) %> Uhr</div>
+      </div>
+      <% if (s.cancelled.length) { %><span class="badge none" title="Absagen"><%= s.cancelled.length %> ✕</span><% } %>
+      <%- include('partials/badge', { s: s }) %>
+      <span class="chev"></span>
+    </summary>
+    <div class="details-body"><% people(s, true); actions(s, true); %></div>
+  </details>
+<% }) %>
+</div>
+<% } %>
 
 <div class="section-header" id="neu">Neuer Dienst</div>
 <form method="post" action="<%= base %>/shifts">
+  <input type="hidden" name="kind" value="shift">
   <div class="group">
-    <label class="field"><span>Bezeichnung</span><input name="title" required maxlength="120" placeholder="z. B. Kuchenstand, Aufbau, Kasse" value="<%= values.title || '' %>"></label>
-    <label class="field"><span>Beginn</span><input type="datetime-local" name="starts_at" required value="<%= values.starts_at || (event.event_date + 'T10:00') %>"></label>
+    <label class="field"><span>Bezeichnung</span><input name="title" required maxlength="120" placeholder="z. B. Kuchenstand, Aufbau, Kasse" value="<%= values.kind !== 'item' && values.title || '' %>"></label>
+    <label class="field"><span>Beginn</span><input type="datetime-local" name="starts_at" required value="<%= values.kind !== 'item' && values.starts_at || (event.event_date + 'T10:00') %>"></label>
     <label class="field"><span>Ende</span><input type="datetime-local" name="ends_at" required value="<%= values.ends_at || (event.event_date + 'T12:00') %>"></label>
-    <label class="field"><span>Personen</span><input type="number" name="capacity" min="1" max="500" required value="<%= values.capacity || 2 %>"></label>
+    <label class="field"><span>Plätze (ideal)</span><input type="number" name="capacity" min="1" max="500" required value="<%= values.capacity || 2 %>"></label>
+    <label class="field"><span>Mindestens</span><input type="number" name="min_capacity" min="0" max="500" value="<%= values.min_capacity || '' %>" placeholder="optional"></label>
+    <label class="field"><span>Gesucht</span><input name="requirement" maxlength="200" placeholder="optional, z. B. 1 Person mit Kassenerfahrung" value="<%= values.requirement || '' %>"></label>
     <label class="field"><span>Wiederholen</span><select name="repeat">
       <% for (var r = 1; r <= 12; r++) { %><option value="<%= r %>"><%= r === 1 ? 'einmalig' : r + ' Schichten nacheinander' %></option><% } %>
     </select></label>
-    <label class="field stack"><span>Hinweise für Helfer</span><textarea name="description" maxlength="1000" placeholder="optional: Treffpunkt, Mitbringen, Kleidung …"><%= values.description || '' %></textarea></label>
+    <label class="field stack"><span>Hinweise für Helfer</span><textarea name="description" maxlength="1000" placeholder="optional: Treffpunkt, Mitbringen, Kleidung …"><%= values.kind !== 'item' && values.description || '' %></textarea></label>
   </div>
-  <div class="section-footer">„Wiederholen“ legt mehrere gleich lange Schichten direkt hintereinander an (z. B. 4 × 2 Std. Ausschank).</div>
+  <div class="section-footer">„Mindestens“ markiert den Dienst rot, solange weniger Leute eingetragen sind. „Wiederholen“ legt mehrere gleich lange Schichten hintereinander an.</div>
   <button class="btn" type="submit">Dienst hinzufügen</button>
 </form>
 
-<h2 class="section-header big" id="pinnwand">Pinnwand & Rundmail</h2>
+<div class="section-header">Neuer Mitbringposten</div>
+<form method="post" action="<%= base %>/shifts">
+  <input type="hidden" name="kind" value="item">
+  <div class="group">
+    <label class="field"><span>Was</span><input name="title" required maxlength="120" placeholder="z. B. Kuchen, Salat, Bierbank-Garnitur"></label>
+    <label class="field"><span>Menge</span><input type="number" name="capacity" min="1" max="500" required value="10"></label>
+    <label class="field"><span>Bis wann</span><input type="datetime-local" name="starts_at" required value="<%= event.event_date + 'T10:00' %>"></label>
+    <label class="field"><span>Hinweis</span><input name="requirement" maxlength="200" placeholder="optional, z. B. bitte beschriften"></label>
+    <label class="field stack"><span>Beschreibung</span><textarea name="description" maxlength="1000" placeholder="optional: Abgabeort, Ansprechpartner …"></textarea></label>
+  </div>
+  <div class="section-footer">Helfer wählen die Menge, die sie mitbringen, und bekommen eine Erinnerung vor der Abgabezeit.</div>
+  <button class="btn secondary" type="submit">Mitbringposten hinzufügen</button>
+</form>
+
+<h2 class="section-header big" id="pinnwand">Pinnwand &amp; Rundmail</h2>
 <form method="post" action="<%= base %>/messages">
   <div class="group">
     <label class="field"><span>Betreff</span><input name="subject" maxlength="120" placeholder="z. B. Treffpunkt geändert"></label>
@@ -136,16 +215,69 @@
 </div>
 <% } %>
 
+<h2 class="section-header big" id="orga">Organisation</h2>
+<div class="section-header">Team</div>
+<div class="group">
+  <div class="row"><div class="icon">👤</div><div class="label"><%= event.admin_name %><div class="detail">Veranstaltungsleitung · <%= event.admin_email %></div></div></div>
+  <% organizers.forEach(function (o) { %>
+    <div class="row"><div class="icon grey">👥</div><div class="label"><%= o.name %><div class="detail">Mitorganisator · <%= o.email %></div></div>
+      <% if (isOwner) { %><form method="post" action="<%= base %>/organizers/<%= o.id %>/delete" data-confirm="Zugang von <%= o.name %> entfernen? Der persönliche Link funktioniert dann nicht mehr."><button class="linkbtn red" type="submit">Entfernen</button></form><% } %>
+    </div>
+  <% }) %>
+</div>
+<% if (isOwner) { %>
+<details class="group" style="margin-top:12px">
+  <summary class="row action">+ Mitorganisator einladen</summary>
+  <form method="post" action="<%= base %>/organizers" class="details-body">
+    <div class="inset">
+      <label class="field"><span>Name</span><input name="name" required maxlength="100"></label>
+      <label class="field"><span>E-Mail</span><input type="email" name="email" required></label>
+    </div>
+    <button class="btn secondary" type="submit">Einladen</button>
+  </form>
+</details>
+<div class="section-footer">Mitorganisatoren bekommen einen eigenen Verwaltungslink per Mail und erhalten Absagen ebenfalls. Im Verlauf siehst du, wer was geändert hat.</div>
+<% } %>
+
+<div class="section-header">Verlauf</div>
+<div class="group">
+  <% if (!activity.length) { %><div class="empty">Noch keine Einträge.</div><% } %>
+  <% activity.slice(0, 6).forEach(function (a) { %>
+    <div class="row"><div class="label"><%= a.text %><div class="detail"><%= a.actor %> · <%= since(a.created_at) %></div></div></div>
+  <% }) %>
+  <% if (activity.length > 6) { %>
+  <details>
+    <summary class="row action">Ältere Einträge anzeigen (<%= activity.length - 6 %>)</summary>
+    <% activity.slice(6).forEach(function (a) { %>
+      <div class="row"><div class="label"><%= a.text %><div class="detail"><%= a.actor %> · <%= since(a.created_at) %></div></div></div>
+    <% }) %>
+  </details>
+  <% } %>
+</div>
+
 <h2 class="section-header big">Export</h2>
 <div class="group">
   <a class="row link" href="<%= base %>/dienstplan.pdf"><div class="icon orange">📄</div><div class="label">Dienstplan (PDF, mit Kontakten)</div></a>
-  <a class="row link" href="<%= base %>/dienstplan.pdf?contacts=0"><div class="icon orange">📋</div><div class="label">Dienstplan zum Aushang (PDF, ohne Kontakte)</div></a>
+  <a class="row link" href="<%= base %>/dienstplan.pdf?contacts=0"><div class="icon orange">📋</div><div class="label">Dienstplan zum Aushang (PDF, mit QR-Code)</div></a>
+  <a class="row link" href="<%= base %>/plakat.pdf"><div class="icon red">📣</div><div class="label">Plakat „Helfer gesucht“ (PDF)</div></a>
   <a class="row link" href="<%= base %>/helfer.csv"><div class="icon green">▦</div><div class="label">Helferliste (CSV für Excel)</div></a>
   <a class="row link" href="<%= base %>/dienstplan.ics"><div class="icon red">📅</div><div class="label">Alle Dienste in meinen Kalender</div></a>
 </div>
 
 <h2 class="section-header big">Einstellungen</h2>
 <details class="group">
+  <summary class="row link" style="list-style:none"><div class="label">Veranstaltung kopieren<div class="detail">z. B. für das Fest im nächsten Jahr – alle Dienste und Posten werden übernommen</div></div></summary>
+  <form method="post" action="<%= base %>/copy" class="details-body">
+    <div class="inset">
+      <label class="field"><span>Neuer Titel</span><input name="title" maxlength="120" value="<%= event.title %>"></label>
+      <label class="field"><span>Neues Datum</span><input type="date" name="event_date" required></label>
+    </div>
+    <div class="section-footer" style="margin:6px 0 0">Alle Zeiten werden um denselben Abstand verschoben. Anmeldungen, Nachrichten und Mitorganisatoren werden nicht übernommen.</div>
+    <button class="btn secondary" type="submit">Kopie anlegen</button>
+  </form>
+</details>
+
+<details class="group" style="margin-top:12px">
   <summary class="row link" style="list-style:none"><div class="label">Veranstaltung bearbeiten</div></summary>
   <form method="post" action="<%= base %>/event" class="details-body">
     <div class="inset">
@@ -154,14 +286,19 @@
       <label class="field"><span>Datum</span><input type="date" name="event_date" required value="<%= event.event_date %>"></label>
       <label class="field"><span>Ort</span><input name="location" maxlength="200" value="<%= event.location || '' %>"></label>
       <label class="field stack"><span>Beschreibung</span><textarea name="description" maxlength="4000"><%= event.description || '' %></textarea></label>
+      <% if (isOwner) { %>
       <label class="field"><span>Leitung</span><input name="admin_name" required maxlength="100" value="<%= event.admin_name %>"></label>
       <label class="field"><span>E-Mail</span><input type="email" name="admin_email" required value="<%= event.admin_email %>"></label>
       <label class="field"><span>Telefon</span><input type="tel" name="admin_phone" value="<%= event.admin_phone || '' %>"></label>
+      <% } else { %>
+      <input type="hidden" name="admin_name" value="<%= event.admin_name %>"><input type="hidden" name="admin_email" value="<%= event.admin_email %>">
+      <% } %>
     </div>
     <button class="btn secondary" type="submit">Speichern</button>
   </form>
 </details>
 
+<% if (isOwner) { %>
 <div class="section-header">Gefahrenzone</div>
 <form method="post" action="<%= base %>/delete" data-confirm="Veranstaltung endgültig löschen?">
   <div class="group">
@@ -170,4 +307,5 @@
   <div class="section-footer"><% if (config.retentionDays) { %>Ohne manuelles Löschen werden alle Daten <%= config.retentionDays %> Tage nach der Veranstaltung automatisch entfernt.<% } %></div>
   <button class="btn danger-soft" type="submit">Veranstaltung löschen</button>
 </form>
+<% } %>
 <%- include('partials/foot') %>

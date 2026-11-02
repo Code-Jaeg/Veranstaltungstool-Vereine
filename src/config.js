@@ -5,14 +5,15 @@ const fs = require('node:fs');
 
 // Geheimnisse können auch als Datei übergeben werden (z. B. CREATE_PASSWORD_FILE=/secrets/create_password),
 // damit sie nicht im Klartext in der Compose-Datei stehen.
+const SECRET_KEYS = ['CREATE_PASSWORD', 'WEBHOOK_SECRET', 'SMTP_USER', 'SMTP_PASS', 'MAIL_WEBHOOK_URL', 'N8N_WEBHOOK_URL'];
 const env = { ...process.env };
-for (const key of Object.keys(process.env)) {
-  if (!key.endsWith('_FILE')) continue;
-  const name = key.slice(0, -5);
+for (const name of SECRET_KEYS) {
+  const file = process.env[`${name}_FILE`];
+  if (!file) continue;
   try {
-    env[name] = fs.readFileSync(process.env[key], 'utf8').trim();
+    env[name] = fs.readFileSync(file, 'utf8').trim();
   } catch (err) {
-    console.error(`[config] ${key}: Datei nicht lesbar (${err.code})`);
+    console.error(`[config] ${name}_FILE: Datei nicht lesbar (${err.code})`);
   }
 }
 
@@ -34,6 +35,8 @@ module.exports = {
   // Kommagetrennte Liste: Stunden vor Schichtbeginn, zu denen erinnert wird.
   reminderHours: (env.REMINDER_HOURS || '48')
     .split(',').map((h) => Number(h.trim())).filter((h) => h > 0).sort((a, b) => b - a),
+  // Tage vor der Veranstaltung, an denen die Leitung einen Kurzbericht zur Besetzung bekommt (0 = aus).
+  reportDaysBefore: Number(env.REPORT_DAYS_BEFORE ?? 3),
   // Tage nach der Veranstaltung, nach denen personenbezogene Daten gelöscht werden (0 = nie).
   retentionDays: Number(env.DATA_RETENTION_DAYS ?? 30),
   // Alternativ zu SMTP: Mails an einen n8n-Webhook übergeben, der sie versendet.

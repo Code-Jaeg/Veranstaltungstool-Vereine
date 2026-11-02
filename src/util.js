@@ -35,12 +35,25 @@ function publicName(name) {
   return `${parts[0]} ${parts[parts.length - 1][0]}.`;
 }
 
+/** Ortszeit-String formatieren (YYYY-MM-DDTHH:MM). */
+const toLocal = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+/** Ganze Tage zum Datumsteil addieren; die Uhrzeit bleibt unverändert (auch über die Zeitumstellung hinweg). */
+function addDays(local, days) {
+  const d = new Date(`${local.slice(0, 10)}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10) + local.slice(10);
+}
+
+/** Abstand zweier Kalendertage (YYYY-MM-DD) in Tagen. */
+const daysBetween = (a, b) => Math.round((Date.parse(`${b}T12:00:00Z`) - Date.parse(`${a}T12:00:00Z`)) / 86_400_000);
+
 const isEmail = (s) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || '').trim());
 const isLocalDateTime = (s) => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(String(s || ''));
 const isLocalDate = (s) => /^\d{4}-\d{2}-\d{2}$/.test(String(s || ''));
 const clean = (s, max = 500) => String(s ?? '').trim().slice(0, max);
 
 module.exports = {
-  token, toDate, fmtDate, fmtShortDate, fmtTime, fmtRange, publicName,
+  token, toDate, toLocal, addDays, daysBetween, fmtDate, fmtShortDate, fmtTime, fmtRange, publicName,
   isEmail, isLocalDateTime, isLocalDate, clean,
 };

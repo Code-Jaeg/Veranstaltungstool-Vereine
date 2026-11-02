@@ -28,7 +28,7 @@ function fold(line) {
 /**
  * items: [{ uid, start, end, title, description, location, url, cancelled }]
  */
-function buildCalendar(items, { method = 'PUBLISH', name } = {}) {
+function buildCalendar(items, { method = 'PUBLISH', name, refreshHours } = {}) {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -37,6 +37,10 @@ function buildCalendar(items, { method = 'PUBLISH', name } = {}) {
     `METHOD:${method}`,
   ];
   if (name) lines.push(`X-WR-CALNAME:${esc(name)}`);
+  if (refreshHours) {
+    // Abo-Kalender: Kalender-Apps sollen regelmäßig neu laden.
+    lines.push(`REFRESH-INTERVAL;VALUE=DURATION:PT${refreshHours}H`, `X-PUBLISHED-TTL:PT${refreshHours}H`);
+  }
   const stamp = utc(new Date());
   for (const it of items) {
     lines.push(
@@ -50,11 +54,14 @@ function buildCalendar(items, { method = 'PUBLISH', name } = {}) {
     if (it.description) lines.push(`DESCRIPTION:${esc(it.description)}`);
     if (it.location) lines.push(`LOCATION:${esc(it.location)}`);
     if (it.url) lines.push(`URL:${it.url}`);
+    // SEQUENCE steigt mit dem Zustand (Warteliste → bestätigt → abgesagt), damit Kalender Updates übernehmen.
     if (it.cancelled) {
-      lines.push('STATUS:CANCELLED', 'SEQUENCE:1');
+      lines.push('STATUS:CANCELLED', 'SEQUENCE:2');
+    } else if (it.tentative) {
+      lines.push('STATUS:TENTATIVE', 'SEQUENCE:0');
     } else {
       lines.push(
-        'STATUS:CONFIRMED', 'SEQUENCE:0',
+        'STATUS:CONFIRMED', 'SEQUENCE:1',
         'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${esc(it.title)}`, 'TRIGGER:-PT2H', 'END:VALARM',
         'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${esc(it.title)}`, 'TRIGGER:-P1D', 'END:VALARM',
       );
@@ -65,23 +72,30 @@ function buildCalendar(items, { method = 'PUBLISH', name } = {}) {
   return lines.map(fold).join('\r\n') + '\r\n';
 }
 
-function signupItem(event, shift, signup, { cancelled = false } = {}) {
-  const manageUrl = `${config.baseUrl}/s/${signup.token}`;
+const helperUrl = (helper) => `${config.baseUrl}/h/${helper.token}`;
+
+function signupItem(event, shift, signup, helper, { cancelled = signup.status === 'cancelled' } = {}) {
+  const manageUrl = helperUrl(helper);
+  const isItem = shift.kind === 'item';
+  const waiting = signup.status === 'waiting';
+  const label = isItem ? `Mitbringen: ${signup.quantity}× ${shift.title}` : shift.title;
   return {
     uid: `signup-${signup.token}`,
     start: shift.starts_at,
     end: shift.ends_at,
-    title: `${shift.title} – ${event.title}`,
+    title: `${waiting ? 'Warteliste: ' : ''}${label} – ${event.title}`,
     description: [
-      `Dein Dienst: ${shift.title}`,
+      isItem ? `Bitte mitbringen: ${signup.quantity}× ${shift.title}${signup.note ? ` (${signup.note})` : ''}` : `Dein Dienst: ${shift.title}`,
+      waiting ? 'Du stehst auf der Warteliste und bekommst eine Mail, sobald ein Platz frei wird.' : '',
       shift.description,
       `Ansprechpartner: ${event.admin_name}${event.admin_phone ? `, ${event.admin_phone}` : ''}`,
-      `Anmeldung verwalten / absagen: ${manageUrl}`,
+      `Deine Dienste ansehen / absagen: ${manageUrl}`,
     ].filter(Boolean).join('\n'),
     location: event.location,
     url: manageUrl,
     cancelled,
+    tentative: waiting,
   };
 }
 
-module.exports = { buildCalendar, signupItem };
+module.exports = { buildCalendar, signupItem, helperUrl };
