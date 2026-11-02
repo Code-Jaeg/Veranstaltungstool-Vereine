@@ -59,3 +59,13 @@ document.querySelectorAll('form#anmelden').forEach((form) => {
 // Ausgewählten oder geöffneten Dienst sichtbar machen (z. B. aus „Ersatz gesucht“-Mail).
 const target = location.hash && document.querySelector(location.hash);
 if (target && target.classList.contains('pick')) target.scrollIntoView({ block: 'center' });
+
+// iOS-Navigationsleiste: Titel und Material-Hintergrund erst, wenn der große Titel weggescrollt ist.
+const navbar = document.querySelector('[data-navbar]');
+const largeTitle = document.querySelector('.large-title');
+if (navbar && largeTitle && 'IntersectionObserver' in window) {
+  new IntersectionObserver(([entry]) => navbar.classList.toggle('scrolled', !entry.isIntersecting), { rootMargin: '-44px 0px 0px 0px' })
+    .observe(largeTitle);
+} else if (navbar) {
+  navbar.classList.add('scrolled', 'always');
+}

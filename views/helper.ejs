@@ -12,7 +12,7 @@
   <% current.forEach(function (e) { var s = e.shift, g = e.signup, waiting = g.status === 'waiting', item = s.kind === 'item', past = u.toDate(s.ends_at) < now; %>
     <div class="pick" id="eintrag-<%= g.id %>">
       <div class="row">
-        <div class="icon <%= waiting ? 'orange' : 'green' %>"><%= waiting ? '⏳' : '✓' %></div>
+        <div class="icon <%= waiting ? 'orange' : 'green' %>"><%- icon(waiting ? 'clock' : 'check') %></div>
         <div class="label">
           <div><%= item ? g.quantity + '× ' + s.title + ' mitbringen' : s.title %></div>
           <div class="shift-time"><% if (item) { %>bis <%= u.fmtShortDate(s.starts_at) %>, <%= u.fmtTime(s.starts_at) %> Uhr<% } else { %><%= u.fmtShortDate(s.starts_at) %> · <%= u.fmtTime(s.starts_at) %>–<%= u.fmtTime(s.ends_at) %> Uhr<% } %></div>
@@ -33,16 +33,16 @@
     </div>
   <% }) %>
   <% cancelled.forEach(function (e) { %>
-    <div class="row"><div class="icon grey">✕</div><div class="label"><span class="strike"><%= e.shift.kind === 'item' ? e.signup.quantity + '× ' + e.shift.title : e.shift.title %></span><div class="detail">abgesagt</div></div></div>
+    <div class="row"><div class="icon grey"><%- icon('xmark') %></div><div class="label"><span class="strike"><%= e.shift.kind === 'item' ? e.signup.quantity + '× ' + e.shift.title : e.shift.title %></span><div class="detail">abgesagt</div></div></div>
   <% }) %>
 </div>
 
 <% if (current.length) { %>
 <div class="section-header">Kalender &amp; Bestätigung</div>
 <div class="group">
-  <a class="row link" href="<%= webcalUrl %>"><div class="icon red">📅</div><div class="label">Kalender abonnieren<div class="detail">aktualisiert sich bei Änderungen und Absagen von selbst</div></div></a>
-  <a class="row link" href="<%= calendarUrl %>"><div class="icon grey">⬇︎</div><div class="label">Als Kalenderdatei laden (.ics)</div></a>
-  <a class="row link" href="/h/<%= helper.token %>/dienstbestaetigung.pdf"><div class="icon orange">📄</div><div class="label">Dienstbestätigung (PDF)</div></a>
+  <a class="row link" href="<%= webcalUrl %>"><div class="icon red"><%- icon('calendar') %></div><div class="label">Kalender abonnieren<div class="detail">aktualisiert sich bei Änderungen und Absagen von selbst</div></div></a>
+  <a class="row link" href="<%= calendarUrl %>"><div class="icon grey"><%- icon('download') %></div><div class="label">Als Kalenderdatei laden (.ics)</div></a>
+  <a class="row link" href="/h/<%= helper.token %>/dienstbestaetigung.pdf"><div class="icon orange"><%- icon('doc') %></div><div class="label">Dienstbestätigung (PDF)</div></a>
 </div>
 <% if (config.reminderHours.length) { %><div class="section-footer">Du bekommst <%= config.reminderHours.map(function (h) { return h >= 24 ? Math.round(h / 24) + ' Tag' + (h >= 48 ? 'e' : '') : h + ' Std.'; }).join(' und ') %> vorher eine Erinnerung per Mail.</div><% } %>
 <% } %>
@@ -58,9 +58,9 @@
 
 <div class="section-header">Kontakt</div>
 <div class="group">
-  <div class="row"><div class="icon grey">👤</div><div class="label"><%= event.admin_name %><div class="detail">Veranstaltungsleitung</div></div></div>
-  <% if (event.admin_phone) { %><a class="row link" href="tel:<%= event.admin_phone %>"><div class="icon green">📞</div><div class="label"><%= event.admin_phone %></div></a><% } %>
-  <a class="row link" href="mailto:<%= event.admin_email %>"><div class="icon">✉️</div><div class="label"><%= event.admin_email %></div></a>
+  <div class="row"><div class="icon grey"><%- icon('person') %></div><div class="label"><%= event.admin_name %><div class="detail">Veranstaltungsleitung</div></div></div>
+  <% if (event.admin_phone) { %><a class="row link" href="tel:<%= event.admin_phone %>"><div class="icon green"><%- icon('phone') %></div><div class="label"><%= event.admin_phone %></div></a><% } %>
+  <a class="row link" href="mailto:<%= event.admin_email %>"><div class="icon"><%- icon('mail') %></div><div class="label"><%= event.admin_email %></div></a>
 </div>
 <div class="section-footer">Bewahre diesen Link auf – er ist dein persönlicher Zugang. Er steht auch in deiner Bestätigungsmail.</div>
 <%- include('partials/foot') %>

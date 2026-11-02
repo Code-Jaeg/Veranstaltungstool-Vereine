@@ -3,9 +3,9 @@
 <h1 class="large-title"><%= event.title %></h1>
 <div class="hero">
   <div class="meta">
-    <div>📅 <span><%= u.fmtDate(event.event_date) %></span></div>
-    <% if (event.location) { %><div>📍 <span><%= event.location %></span></div><% } %>
-    <div>👤 <span><%= event.admin_name %><% if (event.admin_phone) { %> · <a href="tel:<%= event.admin_phone %>"><%= event.admin_phone %></a><% } %> · <a href="mailto:<%= event.admin_email %>">E-Mail</a></span></div>
+    <div><%- icon('calendar') %><span><%= u.fmtDate(event.event_date) %></span></div>
+    <% if (event.location) { %><div><%- icon('pin') %><span><%= event.location %></span></div><% } %>
+    <div><%- icon('person') %><span><%= event.admin_name %><% if (event.admin_phone) { %> · <a href="tel:<%= event.admin_phone %>"><%= event.admin_phone %></a><% } %> · <a href="mailto:<%= event.admin_email %>">E-Mail</a></span></div>
   </div>
   <% if (event.description) { %><p><%= event.description %></p><% } %>
 </div>

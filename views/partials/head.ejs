@@ -8,19 +8,20 @@
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
 <title><%= title %> · <%= config.appName %></title>
 <link rel="icon" href="/static/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/static/icon.svg">
 <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<nav class="navbar"><div class="inner">
-  <span class="side"><% if (locals.back) { %><a href="<%= locals.back.href %>">‹ <%= locals.back.label %></a><% } %></span>
+<nav class="navbar" data-navbar><div class="inner">
+  <span class="side"><% if (locals.back) { %><a class="back" href="<%= locals.back.href %>"><%- icon('chevronLeft') %><span><%= locals.back.label %></span></a><% } %></span>
   <span class="title"><%= locals.navTitle || title %></span>
   <span class="side right"></span>
 </div></nav>
 <main>
-<% if (flash) { %><div class="banner ok" role="status"><%= flash %></div><% } %>
+<% if (flash) { %><div class="toast" role="status"><%- icon('check') %><span><%= flash %></span></div><% } %>
 <% if (locals.errors && locals.errors.length) { %>
-  <div class="banner err" role="alert"><ul><% locals.errors.forEach(function (e) { %><li><%= e %></li><% }) %></ul></div>
+  <div class="banner err" role="alert"><%- icon('warning') %><ul><% locals.errors.forEach(function (e) { %><li><%= e %></li><% }) %></ul></div>
 <% } %>

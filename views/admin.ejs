@@ -34,7 +34,7 @@
   <input id="adminUrl" value="<%= adminUrl %>" readonly>
   <button class="btn small secondary" type="button" data-copy="adminUrl">Kopieren</button>
 </div></div>
-<div class="section-footer">⚠️ Nicht weitergeben – wer den Link hat, sieht alle Kontaktdaten. Weitere Organisatoren bekommen unten einen eigenen Zugang.</div>
+<div class="section-footer">Nicht weitergeben – wer den Link hat, sieht alle Kontaktdaten. Weitere Organisatoren bekommen unten einen eigenen Zugang.</div>
 
 <%
   function people(s, isItem) { %>
@@ -72,11 +72,11 @@
   function actions(s, isItem) { var past = u.toDate(s.ends_at) < now; %>
       <% if (s.free > 0 && !past) { %>
       <form method="post" action="<%= base %>/shifts/<%= s.id %>/call" data-confirm="Alle Helfer dieser Veranstaltung, die hier noch nicht dabei sind, per Mail um Unterstützung bitten?">
-        <button class="btn small secondary" type="submit" style="margin-top:10px">📣 Ersatz suchen<%= s.last_call_at ? ' (zuletzt ' + since(s.last_call_at) + ')' : '' %></button>
+        <button class="btn small secondary" type="submit" style="margin-top:10px"><%- icon('megaphone') %> Ersatz suchen<%= s.last_call_at ? ' (zuletzt ' + since(s.last_call_at) + ')' : '' %></button>
       </form>
       <% } %>
       <details>
-        <summary class="row action" style="padding-left:0">+ Person manuell eintragen</summary>
+        <summary class="row action" style="padding-left:0"><%- icon('plus') %> Person manuell eintragen</summary>
         <form method="post" action="<%= base %>/shifts/<%= s.id %>/signups">
           <div class="inset">
             <label class="field"><span>Name</span><input name="name" required maxlength="100"></label>
@@ -94,7 +94,7 @@
         </form>
       </details>
       <details>
-        <summary class="row action" style="padding-left:0">✎ <%= isItem ? 'Posten' : 'Dienst' %> bearbeiten</summary>
+        <summary class="row action" style="padding-left:0"><%- icon('pencil') %> <%= isItem ? 'Posten' : 'Dienst' %> bearbeiten</summary>
         <form method="post" action="<%= base %>/shifts/<%= s.id %>">
           <div class="inset">
             <label class="field"><span>Bezeichnung</span><input name="title" required maxlength="120" value="<%= s.title %>"></label>
@@ -126,11 +126,11 @@
     <summary class="row">
       <div class="label">
         <div><%= s.title %></div>
-        <div class="shift-time"><%= u.fmtShortDate(s.starts_at) %> · <%= u.fmtTime(s.starts_at) %>–<%= u.fmtTime(s.ends_at) %> Uhr<% if (s.min_capacity > 0 && s.min_capacity < s.capacity) { %> · mind. <%= s.min_capacity %><% } %></div>
+        <div class="shift-time"><%= u.fmtShortDate(s.starts_at) %> · <%= u.fmtTime(s.starts_at) %>–<%= u.fmtTime(s.ends_at) %> Uhr<% if (s.min_capacity > 0 && s.min_capacity < s.capacity) { %> · mind.&nbsp;<%= s.min_capacity %><% } %></div>
         <% if (s.requirement) { %><div class="detail">Gesucht: <%= s.requirement %></div><% } %>
       </div>
       <% if (s.waiting.length) { %><span class="badge low" title="Warteliste">+<%= s.waiting.length %></span><% } %>
-      <% if (s.cancelled.length) { %><span class="badge none" title="Absagen"><%= s.cancelled.length %> ✕</span><% } %>
+      <% if (s.cancelled.length) { %><span class="badge none" title="Absagen"><%= s.cancelled.length %> abgesagt</span><% } %>
       <%- include('partials/badge', { s: s }) %>
       <span class="chev"></span>
     </summary>
@@ -150,7 +150,7 @@
         <div><%= s.title %></div>
         <div class="shift-time">bis <%= u.fmtShortDate(s.starts_at) %>, <%= u.fmtTime(s.starts_at) %> Uhr</div>
       </div>
-      <% if (s.cancelled.length) { %><span class="badge none" title="Absagen"><%= s.cancelled.length %> ✕</span><% } %>
+      <% if (s.cancelled.length) { %><span class="badge none" title="Absagen"><%= s.cancelled.length %> abgesagt</span><% } %>
       <%- include('partials/badge', { s: s }) %>
       <span class="chev"></span>
     </summary>
@@ -218,16 +218,16 @@
 <h2 class="section-header big" id="orga">Organisation</h2>
 <div class="section-header">Team</div>
 <div class="group">
-  <div class="row"><div class="icon">👤</div><div class="label"><%= event.admin_name %><div class="detail">Veranstaltungsleitung · <%= event.admin_email %></div></div></div>
+  <div class="row"><div class="icon"><%- icon('person') %></div><div class="label"><%= event.admin_name %><div class="detail">Veranstaltungsleitung · <%= event.admin_email %></div></div></div>
   <% organizers.forEach(function (o) { %>
-    <div class="row"><div class="icon grey">👥</div><div class="label"><%= o.name %><div class="detail">Mitorganisator · <%= o.email %></div></div>
+    <div class="row"><div class="icon grey"><%- icon('people') %></div><div class="label"><%= o.name %><div class="detail">Mitorganisator · <%= o.email %></div></div>
       <% if (isOwner) { %><form method="post" action="<%= base %>/organizers/<%= o.id %>/delete" data-confirm="Zugang von <%= o.name %> entfernen? Der persönliche Link funktioniert dann nicht mehr."><button class="linkbtn red" type="submit">Entfernen</button></form><% } %>
     </div>
   <% }) %>
 </div>
 <% if (isOwner) { %>
 <details class="group" style="margin-top:12px">
-  <summary class="row action">+ Mitorganisator einladen</summary>
+  <summary class="row action"><%- icon('plus') %> Mitorganisator einladen</summary>
   <form method="post" action="<%= base %>/organizers" class="details-body">
     <div class="inset">
       <label class="field"><span>Name</span><input name="name" required maxlength="100"></label>
@@ -257,11 +257,11 @@
 
 <h2 class="section-header big">Export</h2>
 <div class="group">
-  <a class="row link" href="<%= base %>/dienstplan.pdf"><div class="icon orange">📄</div><div class="label">Dienstplan (PDF, mit Kontakten)</div></a>
-  <a class="row link" href="<%= base %>/dienstplan.pdf?contacts=0"><div class="icon orange">📋</div><div class="label">Dienstplan zum Aushang (PDF, mit QR-Code)</div></a>
-  <a class="row link" href="<%= base %>/plakat.pdf"><div class="icon red">📣</div><div class="label">Plakat „Helfer gesucht“ (PDF)</div></a>
-  <a class="row link" href="<%= base %>/helfer.csv"><div class="icon green">▦</div><div class="label">Helferliste (CSV für Excel)</div></a>
-  <a class="row link" href="<%= base %>/dienstplan.ics"><div class="icon red">📅</div><div class="label">Alle Dienste in meinen Kalender</div></a>
+  <a class="row link" href="<%= base %>/dienstplan.pdf"><div class="icon orange"><%- icon('doc') %></div><div class="label">Dienstplan (PDF, mit Kontakten)</div></a>
+  <a class="row link" href="<%= base %>/dienstplan.pdf?contacts=0"><div class="icon indigo"><%- icon('clipboard') %></div><div class="label">Dienstplan zum Aushang (PDF, mit QR-Code)</div></a>
+  <a class="row link" href="<%= base %>/plakat.pdf"><div class="icon red"><%- icon('megaphone') %></div><div class="label">Plakat „Helfer gesucht“ (PDF)</div></a>
+  <a class="row link" href="<%= base %>/helfer.csv"><div class="icon green"><%- icon('table') %></div><div class="label">Helferliste (CSV für Excel)</div></a>
+  <a class="row link" href="<%= base %>/dienstplan.ics"><div class="icon teal"><%- icon('calendar') %></div><div class="label">Alle Dienste in meinen Kalender</div></a>
 </div>
 
 <h2 class="section-header big">Einstellungen</h2>

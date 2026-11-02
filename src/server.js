@@ -19,6 +19,7 @@ app.disable('x-powered-by');
 
 app.locals.config = config;
 app.locals.u = u;
+app.locals.icon = require('./icons').icon;
 
 const FLASH = {
   created: 'Veranstaltung angelegt. Den Verwaltungslink haben wir dir auch per Mail geschickt.',
