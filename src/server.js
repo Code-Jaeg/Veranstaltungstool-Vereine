@@ -20,6 +20,13 @@ app.disable('x-powered-by');
 app.locals.config = config;
 app.locals.u = u;
 app.locals.icon = require('./icons').icon;
+// Versionsstempel für CSS/JS: Browser laden nach einem Update sofort die neue Fassung.
+app.locals.asset = (() => {
+  const hash = crypto.createHash('sha256');
+  for (const f of ['style.css', 'app.js']) hash.update(require('node:fs').readFileSync(path.join(__dirname, '..', 'public', f)));
+  const v = hash.digest('hex').slice(0, 10);
+  return (file) => `/static/${file}?v=${v}`;
+})();
 
 const FLASH = {
   created: 'Veranstaltung angelegt. Den Verwaltungslink haben wir dir auch per Mail geschickt.',
