@@ -1,13 +1,27 @@
-# Nextcloud-Themes: Catppuccin Latte & Apple
+# Nextcloud-Themes: Fjord, Catppuccin Latte & Apple
 
-Zwei serverweite Themes für Nextcloud. Sie gelten für **alle Nutzer**, weil sie über die
+Drei serverweite Themes für Nextcloud. Sie gelten für **alle Nutzer**, weil sie über die
 Admin-App **Custom CSS** und die zentralen **Theming**-Einstellungen eingespielt werden.
 Am Nextcloud-Core wird nichts verändert, deshalb überleben die Themes Updates.
 
 | Theme | Datei | Look |
 |---|---|---|
-| **Catppuccin Latte** (Standard) | `catppuccin-latte.css` | Helle Pastellpalette von [Catppuccin](https://catppuccin.com/palette), Akzent Blue `#1E66F5` |
+| **Fjord** (Standard) | `fjord.css` | Ruhiges Editorial-Design in Blautönen: schieferblaue Seitenleiste mit Pillen, Serifen-Überschriften, flache Kacheln |
+| Catppuccin Latte | `catppuccin-latte.css` | Helle Pastellpalette von [Catppuccin](https://catppuccin.com/palette), Akzent Blue `#1E66F5` |
 | Apple | `ios-theme.css` | Nach Vorbild iCloud.com / apple.com, Akzent `#0071E3` |
+
+## Fjord
+
+- Kopfzeile Nachtblau `#18222E`, Seitenleiste Schieferblau `#46607A` mit hellen Pillen `#D6E0EA`
+- Inhaltsfläche `#F6F8FA` auf blaugrauem Rahmen `#CBD6E0`, Primärfarbe `#3F5A75`
+- Überschriften und Ordnerbeschreibungen (Readme.md) in Serifenschrift, Suchfelder nur unterstrichen
+- Kachelansicht als flache Karteikarten, Ordner in gedämpftem Blau
+- Login-Seite schieferblau, Einstellungen mit derselben Seitenleiste
+- Getestet mit Nextcloud 31 (Dateien, Dashboard, Einstellungen, Login)
+
+```bash
+./apply-theme.sh nextcloud fjord
+```
 
 ## Catppuccin Latte
 

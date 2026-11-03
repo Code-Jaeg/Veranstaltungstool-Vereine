@@ -1,0 +1,426 @@
+/*
+ * Nextcloud – "Fjord"
+ * Ruhiges Editorial-Design in gedämpften Blautönen: farbige Seitenleiste mit
+ * Pillen-Navigation, helle Inhaltsfläche, Serifen-Überschriften, flache Kacheln.
+ * Serverweit über die App "Custom CSS". Getestet mit Nextcloud 31.
+ */
+
+/* ---------- Palette & Nextcloud-Variablen ---------- */
+:root,
+body,
+[data-theme-default],
+[data-theme-light],
+[data-theme-dark],
+[data-theme-light-highcontrast],
+[data-theme-dark-highcontrast] {
+	--fj-night: #18222E;      /* Kopfzeile */
+	--fj-slate: #46607A;      /* Seitenleiste */
+	--fj-slate-hover: #52708D;
+	--fj-mist: #D6E0EA;       /* aktive Pille, helle Buttons */
+	--fj-mist-hover: #C7D4E1;
+	--fj-frame: #CBD6E0;      /* Außenrahmen */
+	--fj-paper: #F6F8FA;      /* Inhaltsfläche */
+	--fj-tile: #EAEFF3;       /* Kacheln */
+	--fj-ink: #1F2B37;        /* Text */
+	--fj-ink-soft: #5B6976;   /* Nebentext */
+	--fj-line: #DCE3E9;       /* Trennlinien */
+	--fj-accent: #3F5A75;     /* Primärfarbe */
+	--fj-on-slate: #F2F5F8;   /* Text auf Seitenleiste */
+
+	--fj-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+
+	--color-main-background: var(--fj-paper) !important;
+	--color-main-background-rgb: 246, 248, 250 !important;
+	--color-main-background-translucent: rgba(246, 248, 250, 0.9) !important;
+	--color-main-background-blur: rgba(246, 248, 250, 0.9) !important;
+	--color-background-hover: var(--fj-tile) !important;
+	--color-background-dark: var(--fj-tile) !important;
+	--color-background-darker: var(--fj-mist) !important;
+	--color-placeholder-light: var(--fj-line) !important;
+	--color-placeholder-dark: var(--fj-mist-hover) !important;
+
+	--color-main-text: var(--fj-ink) !important;
+	--color-text-maxcontrast: var(--fj-ink-soft) !important;
+	--color-text-light: var(--fj-ink) !important;
+	--color-text-lighter: var(--fj-ink-soft) !important;
+
+	--color-border: var(--fj-line) !important;
+	--color-border-dark: #C3CED8 !important;
+	--color-border-maxcontrast: #7D8B98 !important;
+
+	--color-primary: var(--fj-accent) !important;
+	--color-primary-element: var(--fj-accent) !important;
+	--color-primary-element-hover: #344C63 !important;
+	--color-primary-element-text: #FFFFFF !important;
+	--color-primary-element-light: var(--fj-mist) !important;
+	--color-primary-element-light-hover: var(--fj-mist-hover) !important;
+	--color-primary-element-light-text: var(--fj-ink) !important;
+	--color-primary-light: var(--fj-mist) !important;
+	--color-primary-light-hover: var(--fj-mist-hover) !important;
+	--color-primary-light-text: var(--fj-ink) !important;
+
+	--color-error: #B42335 !important;
+	--color-warning: #9A5B0B !important;
+	--color-success: #2E6B45 !important;
+	--color-info: var(--fj-accent) !important;
+
+	--font-face: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+		"Helvetica Neue", Arial, sans-serif !important;
+	--border-radius: 8px !important;
+	--border-radius-small: 6px !important;
+	--border-radius-element: 8px !important;
+	--border-radius-large: 10px !important;
+	--border-radius-container: 10px !important;
+	--border-radius-container-large: 14px !important;
+	--border-radius-pill: 999px !important;
+	--body-container-radius: 6px !important;
+}
+
+/* ---------- Rahmen ---------- */
+body {
+	background: var(--fj-frame) !important;
+	color: var(--fj-ink);
+	-webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Kopfzeile: dunkles Nachtblau ---------- */
+#header {
+	background-color: var(--fj-night) !important;
+	background-image: none !important;
+}
+
+#header,
+#header .app-menu-entry__label,
+#header .header-menu__trigger,
+#header .unified-search__trigger {
+	color: #E8EEF4 !important;
+}
+
+#header .app-menu-entry--active::before {
+	background-color: #E8EEF4 !important;
+}
+
+/* ---------- Inhaltscontainer ---------- */
+#content,
+#content-vue {
+	border-radius: var(--body-container-radius) !important;
+	box-shadow: 0 18px 50px rgba(24, 34, 46, 0.14) !important;
+	overflow: hidden;
+}
+
+/* ---------- Seitenleiste: Schieferblau mit Pillen ---------- */
+.app-navigation,
+#app-navigation-vue {
+	background-color: var(--fj-slate) !important;
+	border-right: none !important;
+	--color-main-text: var(--fj-on-slate);
+	--color-text-maxcontrast: rgba(242, 245, 248, 0.72);
+	--color-background-hover: var(--fj-slate-hover);
+	--color-primary-element-light: var(--fj-mist);
+	--color-primary-element-light-text: var(--fj-ink);
+}
+
+.app-navigation .app-navigation-entry,
+#app-navigation-vue .app-navigation-entry {
+	border-radius: var(--border-radius-pill) !important;
+	background-color: transparent !important;
+}
+
+.app-navigation .app-navigation-entry *,
+#app-navigation-vue .app-navigation-entry * {
+	color: var(--fj-on-slate) !important;
+}
+
+.app-navigation .app-navigation-entry:hover,
+#app-navigation-vue .app-navigation-entry:hover {
+	background-color: var(--fj-slate-hover) !important;
+}
+
+.app-navigation .app-navigation-entry.active,
+.app-navigation .app-navigation-entry--active,
+#app-navigation-vue .app-navigation-entry.active,
+#app-navigation-vue .app-navigation-entry--active {
+	background-color: var(--fj-mist) !important;
+}
+
+.app-navigation .app-navigation-entry.active *,
+.app-navigation .app-navigation-entry--active *,
+#app-navigation-vue .app-navigation-entry.active *,
+#app-navigation-vue .app-navigation-entry--active * {
+	color: var(--fj-ink) !important;
+}
+
+.app-navigation .app-navigation-caption__name,
+.app-navigation .app-navigation-caption {
+	color: rgba(242, 245, 248, 0.7) !important;
+}
+
+/* Knöpfe in der Seitenleiste (z. B. "+ Neu") */
+.app-navigation .button-vue--vue-primary,
+.app-navigation .button-vue--primary {
+	background-color: var(--fj-mist) !important;
+	color: var(--fj-ink) !important;
+}
+
+.app-navigation .button-vue--vue-primary *,
+.app-navigation .button-vue--primary * {
+	color: var(--fj-ink) !important;
+}
+
+/* Fortschrittsbalken Speicherplatz */
+.app-navigation progress,
+.app-navigation .progress-bar {
+	--progress-bar-background: rgba(255, 255, 255, 0.25);
+	--progress-bar-color: var(--fj-mist);
+}
+
+/* Einstellungen nutzen noch die klassische Navigation */
+body#body-settings #app-navigation {
+	background-color: var(--fj-slate) !important;
+	border-right: none !important;
+}
+
+body#body-settings #app-navigation li a,
+body#body-settings #app-navigation .app-navigation-caption,
+body#body-settings #app-navigation .app-navigation-caption__name,
+body#body-settings #app-navigation h3 {
+	color: var(--fj-on-slate) !important;
+}
+
+body#body-settings #app-navigation li a {
+	border-radius: var(--border-radius-pill) !important;
+	background-color: transparent !important;
+}
+
+body#body-settings #app-navigation li a:hover {
+	background-color: var(--fj-slate-hover) !important;
+}
+
+body#body-settings #app-navigation li a.active,
+body#body-settings #app-navigation li.active > a,
+body#body-settings #app-navigation .app-navigation-entry--active a {
+	background-color: var(--fj-mist) !important;
+	color: var(--fj-ink) !important;
+}
+
+body#body-settings #app-navigation li.active > a *,
+body#body-settings #app-navigation li a.active * {
+	color: var(--fj-ink) !important;
+}
+
+body#body-settings #app-navigation li a img,
+body#body-settings #app-navigation li a svg {
+	filter: invert(1) brightness(1.2);
+}
+
+body#body-settings #app-navigation li a.active img,
+body#body-settings #app-navigation li a.active svg,
+body#body-settings #app-navigation li.active > a img,
+body#body-settings #app-navigation .app-navigation-entry--active img,
+body#body-settings #app-navigation .app-navigation-entry--active svg {
+	filter: none;
+}
+
+/* ---------- Überschriften in Serifenschrift ---------- */
+h1, h2,
+.app-content h2,
+.settings-section__name,
+.empty-content__name,
+.panel--header h2,
+#app-dashboard h2 {
+	font-family: var(--fj-serif) !important;
+	font-weight: 400 !important;
+	letter-spacing: -0.01em;
+	color: var(--fj-ink) !important;
+}
+
+/* Ordnerbeschreibung (Readme.md) als großer Titel wie im Vorbild */
+.rich-workspace h1,
+.is-rich-workspace h1 {
+	font-family: var(--fj-serif) !important;
+	font-weight: 400 !important;
+	font-size: 40px !important;
+	line-height: 1.12 !important;
+	letter-spacing: -0.015em;
+}
+
+#app-dashboard > h2,
+.dashboard h2 {
+	font-size: 34px !important;
+	line-height: 1.15 !important;
+}
+
+/* Breadcrumbs in der Dateiansicht als ruhige Titelzeile */
+.files-list__header .breadcrumb__crumbs .button-vue__text,
+.files-list__breadcrumbs .button-vue__text {
+	font-family: var(--fj-serif);
+	font-size: 18px;
+	font-weight: 400 !important;
+}
+
+/* ---------- Buttons: helle Pillen ---------- */
+.button-vue {
+	border-radius: var(--border-radius-pill) !important;
+	font-weight: 500 !important;
+}
+
+.app-content .button-vue--vue-primary,
+.app-content .button-vue--primary,
+.modal-container .button-vue--vue-primary,
+.modal-container .button-vue--primary {
+	background-color: var(--fj-accent) !important;
+	color: #FFFFFF !important;
+}
+
+.button-vue--vue-secondary,
+.button-vue--secondary {
+	background-color: var(--fj-mist) !important;
+	color: var(--fj-ink) !important;
+}
+
+.button-vue--vue-secondary:hover,
+.button-vue--secondary:hover {
+	background-color: var(--fj-mist-hover) !important;
+}
+
+/* ---------- Suchfelder: nur Unterstrich ---------- */
+.app-content .input-field__input[type="search"],
+.files-list__filters .input-field__input,
+.app-navigation-search .input-field__input {
+	background: transparent !important;
+	border: none !important;
+	border-bottom: 1px solid var(--color-border-dark) !important;
+	border-radius: 0 !important;
+	box-shadow: none !important;
+}
+
+/* ---------- Übrige Eingabefelder ---------- */
+.input-field__input,
+.textarea__input,
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="url"],
+input[type="tel"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+	background-color: #FFFFFF;
+	border: 1px solid var(--color-border-dark) !important;
+	border-radius: var(--border-radius) !important;
+	box-shadow: none !important;
+}
+
+.input-field__input:focus,
+.textarea__input:focus,
+input:focus-visible,
+textarea:focus-visible {
+	border-color: var(--fj-accent) !important;
+	box-shadow: 0 0 0 3px rgba(63, 90, 117, 0.18) !important;
+}
+
+/* ---------- Dateiliste ---------- */
+.files-list__row {
+	border-bottom: 1px solid var(--fj-line) !important;
+}
+
+.files-list__row:hover {
+	background-color: var(--fj-tile) !important;
+}
+
+.files-list__row--active,
+.files-list__row--active:hover {
+	background-color: var(--fj-mist) !important;
+}
+
+/* Rasteransicht: flache Kacheln wie Karteikarten */
+.files-list--grid .files-list__row {
+	border-bottom: none !important;
+}
+
+.files-list--grid .files-list__row-icon {
+	background-color: var(--fj-tile);
+	border-radius: 2px;
+}
+
+.files-list--grid .files-list__row-name-text {
+	font-weight: 600;
+}
+
+/* Ordner-Symbole in gedämpftem Blau */
+.files-list__row-icon .folder-icon,
+.files-list__row-icon svg.folder-icon {
+	color: #8FA5BA !important;
+}
+
+/* ---------- Rechte Seitenleiste ---------- */
+.app-sidebar,
+#app-sidebar-vue {
+	background-color: #FFFFFF !important;
+	border-left: 1px solid var(--fj-line) !important;
+}
+
+.app-sidebar-header__mainname {
+	font-family: var(--fj-serif);
+	font-weight: 400 !important;
+	font-size: 22px !important;
+}
+
+/* ---------- Menüs, Popover, Dialoge ---------- */
+.v-popper--theme-dropdown .v-popper__inner,
+.header-menu__content {
+	border: 1px solid var(--fj-line) !important;
+	border-radius: var(--border-radius-large) !important;
+	box-shadow: 0 16px 40px rgba(24, 34, 46, 0.16) !important;
+}
+
+.modal-container {
+	border-radius: var(--border-radius-container-large) !important;
+	box-shadow: 0 24px 60px rgba(24, 34, 46, 0.28) !important;
+}
+
+.modal-mask {
+	background-color: rgba(24, 34, 46, 0.45) !important;
+}
+
+/* ---------- Dashboard-Kacheln ---------- */
+.panel {
+	background-color: var(--fj-paper) !important;
+	border: 1px solid var(--fj-line);
+	border-radius: var(--border-radius-large) !important;
+	box-shadow: none !important;
+	-webkit-backdrop-filter: none !important;
+	backdrop-filter: none !important;
+}
+
+/* ---------- Login-Seite ---------- */
+body#body-login {
+	background: var(--fj-slate) !important;
+	background-image: none !important;
+}
+
+body#body-login #header,
+body#body-login header {
+	background: transparent !important;
+}
+
+body#body-login .guest-box,
+body#body-login .login-box {
+	background-color: var(--fj-paper) !important;
+	color: var(--fj-ink) !important;
+	border-radius: var(--border-radius-container-large) !important;
+	box-shadow: 0 24px 60px rgba(24, 34, 46, 0.3) !important;
+}
+
+body#body-login h2,
+body#body-login .login-form__headline {
+	font-family: var(--fj-serif) !important;
+	font-weight: 400 !important;
+}
+
+/* ---------- Scrollbars ---------- */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: #A9B6C3 transparent;
+}

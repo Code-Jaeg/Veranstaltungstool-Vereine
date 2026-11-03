@@ -4,18 +4,24 @@
 # Aufruf:
 #   ./apply-theme.sh [container-name] [theme]
 #     container-name  Standard: nextcloud (AIO: nextcloud-aio-nextcloud)
-#     theme           catppuccin (Standard, Catppuccin Latte) | apple
+#     theme           fjord (Standard, Blautöne) | catppuccin (Catppuccin Latte) | apple
 #   NC_USER=www-data ./apply-theme.sh nextcloud-app apple
 #
 # Benötigt: docker, laufender Nextcloud-Container (offizielles Image oder AIO).
 set -euo pipefail
 
 CONTAINER="${1:-nextcloud}"
-THEME="${2:-catppuccin}"
+THEME="${2:-fjord}"
 NC_USER="${NC_USER:-www-data}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 case "$THEME" in
+	fjord)
+		CSS_FILE="$SCRIPT_DIR/fjord.css"
+		PRIMARY="#3F5A75"   # Schieferblau
+		BACKGROUND="#CBD6E0"
+		ENFORCE_THEME="light"
+		;;
 	catppuccin)
 		CSS_FILE="$SCRIPT_DIR/catppuccin-latte.css"
 		PRIMARY="#1E66F5"   # Catppuccin Latte Blue
@@ -29,7 +35,7 @@ case "$THEME" in
 		ENFORCE_THEME=""
 		;;
 	*)
-		echo "Unbekanntes Theme '$THEME' (erlaubt: catppuccin, apple)" >&2
+		echo "Unbekanntes Theme '$THEME' (erlaubt: fjord, catppuccin, apple)" >&2
 		exit 1
 		;;
 esac
