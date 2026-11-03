@@ -1,0 +1,78 @@
+<%#
+  Auswahlliste für Dienste und Mitbringposten (öffentliche Seite und persönliche Helferseite).
+  Erwartet: list (Dienste mit filled/free/need), selected (Set von IDs), values (Formularwerte), showPeople
+%>
+<% var now = new Date();
+   var duty = list.filter(function (s) { return s.kind !== 'item'; });
+   var items = list.filter(function (s) { return s.kind === 'item'; });
+   var days = {}; duty.forEach(function (s) { var d = s.starts_at.slice(0, 10); (days[d] = days[d] || []).push(s); }); %>
+
+<% if (duty.length) { %>
+<h2 class="section-header big" id="dienste">Dienste</h2>
+<% } %>
+<% Object.keys(days).forEach(function (day) { %>
+  <div class="section-header"><%= u.fmtDate(day) %></div>
+  <div class="group">
+  <% days[day].forEach(function (s) { var past = u.toDate(s.ends_at) < now; var full = s.free < 1; var checked = selected.has(s.id); %>
+    <div class="pick<%= past ? ' past' : '' %>" id="shift-<%= s.id %>">
+      <label class="row">
+        <% if (past) { %>
+          <span class="tick disabled" aria-hidden="true"></span>
+        <% } else { %>
+          <input class="tick" type="checkbox" name="<%= full ? 'wait' : 'shift' %>" value="<%= s.id %>" <%= checked ? 'checked' : '' %> data-pick>
+        <% } %>
+        <div class="label">
+          <div><%= s.title %></div>
+          <div class="shift-time"><%= u.fmtTime(s.starts_at) %>–<%= u.fmtTime(s.ends_at) %> Uhr<% if (s.ends_at.slice(0,10) !== day) { %> (+1)<% } %><% if (full && !past) { %> · <span class="waitnote">voll – Warteliste<% if (s.waiting.length) { %> (<%= s.waiting.length %> wartend)<% } %></span><% } %></div>
+          <% if (s.requirement) { %><div class="detail">Gesucht: <%= s.requirement %></div><% } %>
+          <div class="progress"><span style="width:<%= Math.min(100, Math.round(s.filled / s.capacity * 100)) %>%"></span><% if (s.min_capacity > 0 && s.min_capacity < s.capacity) { %><i class="minmark" style="left:<%= Math.round(s.min_capacity / s.capacity * 100) %>%"></i><% } %></div>
+        </div>
+        <%- include('badge', { s: s }) %>
+      </label>
+      <% if (showPeople && (s.description || s.active.length)) { %>
+      <div class="pick-more">
+        <% if (s.description) { %><div class="muted small" style="white-space:pre-line"><%= s.description %></div><% } %>
+        <div class="people">
+          <% s.active.forEach(function (g) { %><span class="chip"><%= u.publicName(g.name) %></span><% }) %>
+          <% for (var i = 0; i < s.free; i++) { %><span class="chip freeslot">frei</span><% } %>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  <% }) %>
+  </div>
+<% }) %>
+
+<% if (items.length) { %>
+<h2 class="section-header big" id="mitbringen">Mitbringliste</h2>
+<div class="group">
+  <% items.forEach(function (s) { var past = u.toDate(s.starts_at) < now; var max = Math.min(s.free, 20); var current = values['qty_' + s.id] || (selected.has(s.id) && max > 0 ? 1 : 0); %>
+  <div class="pick<%= past ? ' past' : '' %>" id="shift-<%= s.id %>">
+    <div class="row">
+      <div class="label">
+        <div><%= s.title %></div>
+        <div class="shift-time">bis <%= u.fmtShortDate(s.starts_at) %>, <%= u.fmtTime(s.starts_at) %> Uhr · noch <%= s.free %> von <%= s.capacity %> gesucht</div>
+        <% if (s.requirement) { %><div class="detail"><%= s.requirement %></div><% } %>
+      </div>
+      <% if (!past && max > 0) { %>
+        <select class="qty" name="qty_<%= s.id %>" aria-label="Menge <%= s.title %>" data-pick>
+          <% for (var q = 0; q <= max; q++) { %><option value="<%= q %>" <%= Number(current) === q ? 'selected' : '' %>><%= q === 0 ? '–' : q + '×' %></option><% } %>
+        </select>
+      <% } else { %>
+        <%- include('badge', { s: s }) %>
+      <% } %>
+    </div>
+    <% if (!past && max > 0) { %>
+    <div class="pick-more item-note" <%= Number(current) > 0 ? '' : 'hidden' %>>
+      <input name="note_<%= s.id %>" maxlength="300" placeholder="Was genau? z. B. Apfelkuchen, glutenfrei" value="<%= values['note_' + s.id] || '' %>">
+    </div>
+    <% } %>
+    <% if (showPeople && s.active.length) { %>
+    <div class="pick-more"><div class="people">
+      <% s.active.forEach(function (g) { %><span class="chip"><%= g.quantity %>× <%= u.publicName(g.name) %><% if (g.note) { %> · <%= g.note %><% } %></span><% }) %>
+    </div></div>
+    <% } %>
+  </div>
+  <% }) %>
+</div>
+<% } %>

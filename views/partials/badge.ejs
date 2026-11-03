@@ -1,0 +1,2 @@
+<% var cls = s.filled >= s.capacity ? 'full' : s.critical ? (s.filled === 0 ? 'none' : 'low') : 'open'; %>
+<span class="badge <%= cls %>" title="<%= s.min_capacity > 0 && s.min_capacity < s.capacity ? 'mindestens ' + s.min_capacity + ', ideal ' + s.capacity : '' %>"><%= s.filled >= s.capacity ? (s.kind === 'item' ? 'Genug' : 'Voll') : s.filled + '/' + s.capacity %></span>
